@@ -15,7 +15,6 @@ namespace Kursach
         int M;
         ImageControl imageControls;
         GameStatus gameState;
-
         private Vector3[] ColorImages = new Vector3[]
         {
             new Vector3(0,0,0), //black
@@ -27,8 +26,6 @@ namespace Kursach
             new Vector3(238/255f,130/255f,238/255f),//purpule
             new Vector3(255/255f,0,0),//red
         };
-
-
         public Game(GameWindowSettings gSettings, NativeWindowSettings nSettings) : base(gSettings, nSettings)
         {
 
@@ -45,14 +42,8 @@ namespace Kursach
             GL.LoadIdentity();
             GL.Ortho(0, 700, 0, 500, -1, 1);
             GL.MatrixMode(MatrixMode.Modelview);
-
             gameState = new GameStatus(M, N);
             imageControls = new ImageControl(M, N, cellSize, true);
-
-
-
-
-            //запускается только в начале. начальные настройки можно сюда поставить
         }
         protected override void OnUnload()
         {
@@ -69,19 +60,14 @@ namespace Kursach
             base.OnRenderFrame(args);
             GL.ClearColor(Color4.Black);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
-
             DrawAll(gameState, imageControls);
             DrawRedLine();
             SwapBuffers();
         }
-
-
         double lag = 0;
         double TIME_PER_FRAME = 0.45;
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
-
             if (!gameState.GameOver)
             {
                 lag += args.Time;
@@ -94,28 +80,20 @@ namespace Kursach
                     }
                 }
             }
-
-
             base.OnUpdateFrame(args);
         }
-
-
         private void SetupGameCanvas(ImageControl d, Grid grid)
         {
-
-
             for (int i = 0; i < M; i++)
             {
                 for (int j = 0; j < N; j++)
                 {
-
                     int id = grid[i, j];
                     GL.Color3(ColorImages[id]);
                     d.Grid1[i][j].Draw();
                 }
             }
         }
-
         private void DrawRedLine()
         {
             GL.Color3(1.0, 0.0, 0.0); // цвет наших линий, в данном слуае - красный
@@ -128,18 +106,12 @@ namespace Kursach
             {
                 GL.Vertex2(0, j); GL.Vertex2(w, j); // рисуем ту же самую прямую, но в другом направлении
             }
-
             GL.Vertex2(0, h);
             GL.Vertex2(w, h);
-
             GL.Vertex2(w, 0);
             GL.Vertex2(w, h);
-
-
-
             GL.End(); // конец отрисовки
         }
-
         private void DrawBlock(Block block)
         {
             foreach (Position p in block.TilePositions())
@@ -148,7 +120,6 @@ namespace Kursach
                 imageControls.Grid1[p.Row][p.Column].Draw();
             }
         }
-
         private void DrawAll(GameStatus gameState, ImageControl d)
         {
             SetupGameCanvas(imageControls, gameState._Grid);
@@ -157,11 +128,8 @@ namespace Kursach
         protected override void OnKeyDown(KeyboardKeyEventArgs e)
         {
             base.OnKeyDown(e);
-
             if (gameState.GameOver)
-            {
                 return;
-            }
             else
             {
                 switch (e.Key)
@@ -173,11 +141,6 @@ namespace Kursach
                     case Keys.P:; break;
                 }
             }
-
-
-
         }
-
-
     }
 }

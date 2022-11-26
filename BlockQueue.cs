@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Kursach
+﻿namespace Kursach
 {
     internal class BlockQueue
     {
@@ -18,20 +12,16 @@ namespace Kursach
             new BlockT(),
             new BlockZ(),
         };
-
         private Random random = new Random(); 
         public Block NextBlock { get; set; }
-
         private Block RandomBlock()
         {
             return blocks[random.Next(blocks.Length)];
         }
-
         public BlockQueue()
         {
             NextBlock = RandomBlock();
         }
-
         public Block GetAndUpdate()
         {
             Block block = NextBlock;
@@ -39,9 +29,7 @@ namespace Kursach
             {
                 NextBlock = RandomBlock();
             } while (block.Id == NextBlock.Id);
-
             return block;
-
         }
     }
 }

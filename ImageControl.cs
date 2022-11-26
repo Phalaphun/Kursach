@@ -1,24 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Kursach
 {
-    enum BlockColor
-    {
-        Cyan,
-        Blue,
-        Orange,
-        Yellow,
-        Green,
-        Purpule,
-        Red,
-    }
-
     internal class ImageControl
     {
         private Cell[][] grid1;
@@ -30,7 +13,6 @@ namespace Kursach
             {
                 Grid1[i] = new Cell[m];
             }
-
             for (int i = 0; i < n; i++)
             {
                 for (int j = 0; j < m; j++)
@@ -47,7 +29,6 @@ namespace Kursach
             {
                 Grid1[i] = new Cell[n];
             }
-
             for (int i = m - 1; i >= 0; i--)
             {
                 for (int j = n - 1; j >= 0; j--)
@@ -57,14 +38,11 @@ namespace Kursach
             }
         }
     }
-
-
     internal class Cell
     {
         int x, y, x1, y1, scale;
         int id;
         public int Id { get { return id; } set { id = value; } }
-
         public Cell(int x, int y, int scale)
         {
             this.scale = scale;
@@ -73,10 +51,8 @@ namespace Kursach
             x1 = x + 1;
             y1 = y + 1;
         }
-
         public void Draw()
         {
-            //GL.Rect(x * scale, y * scale, x1 * scale, y1 * scale);
             GL.Begin(PrimitiveType.Polygon);
             GL.Vertex2(x * (scale), y * (scale));
             GL.Vertex2(x1 * (scale), y * (scale));
@@ -84,14 +60,5 @@ namespace Kursach
             GL.Vertex2(x * (scale), y1 * (scale));
             GL.End();
         }
-
-        public void ChangeColor(Vector3 c)
-        {
-            GL.Color3(c);
-            GL.Rect(x * scale, y * scale, x1 * scale, y1 * scale);
-        }
-
-
-
     }
 }
