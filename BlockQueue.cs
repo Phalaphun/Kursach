@@ -12,6 +12,11 @@ namespace Kursach
         {
             new BlockI(),
             new BlockO(),
+            new BlockJ(),
+            new BlockL(),
+            new BlockS(),
+            new BlockT(),
+            new BlockZ(),
         };
 
         private Random random = new Random(); 

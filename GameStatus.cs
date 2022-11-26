@@ -90,7 +90,8 @@ namespace Kursach
                 _Grid[p.Row, p.Column] = CurrentBlock.Id;
             }
 
-            _Grid.ClearAllRows();
+            //_Grid.ClearAllRows();
+            _Grid.ClearRows();
 
             if(IsGameOver())
             {

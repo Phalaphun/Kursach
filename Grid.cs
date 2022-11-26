@@ -99,11 +99,21 @@
         private void MoveRowDown(int r, int numRows)
         {
             
+
             for (int c = 0; c < Columns; c++)
             {
+                if (r == Rows-1)
+                {
+                    grid[r, c] = 0;
+                    
+                }
+                else
+                {
+                    grid[r + numRows, c] = grid[r, c];
+                    grid[r, c] = 0;
+                }
                 //Это так, потому что нумерация идёт так, что Rows находится внизу. На верху же как бы 0. Поэтому и прибаляю чтобы пойти вниз 
-                grid[r + numRows, c] = grid[r, c];
-                grid[r, c] = 0;
+
             }
         }
 
@@ -126,5 +136,28 @@
 
         }
 
+        public int ClearRows()
+        {
+            int cleared = 0;
+            while (RowFullCheckerAll())
+            {
+                cleared+=ClearAllRows();
+            }
+            return cleared;
+        }
+
+        private bool RowFullCheckerAll()
+        {
+            bool temp = false;
+            for(int r = Rows - 1; r > 0; r--)
+            {
+                temp = RowFullChecker(r);
+                if (temp)
+                {
+                    break;
+                }
+            }
+            return temp;
+        }
     }
 }

@@ -8,8 +8,11 @@ namespace Kursach
 {
     internal class BlockO:Block
     {
-        private readonly Position[][] tiles = new Position[][]
+        private Position[][] tiles = new Position[][]
         {
+            new Position[] { new(0,0), new(0,1), new(1,0), new(1,1) },
+            new Position[] { new(0,0), new(0,1), new(1,0), new(1,1) },
+            new Position[] { new(0,0), new(0,1), new(1,0), new(1,1) },
             new Position[] { new(0,0), new(0,1), new(1,0), new(1,1) }
         };
 

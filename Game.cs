@@ -87,8 +87,26 @@ namespace Kursach
             SwapBuffers();
         }
 
+
+        double lag = 0;
+        double TIME_PER_FRAME = 0.45;
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
+
+            if (!gameState.GameOver)
+            {
+                lag += args.Time;
+                if (lag > TIME_PER_FRAME)
+                {
+                    while (lag > TIME_PER_FRAME)
+                    {
+                        gameState.MoveBlockDown();
+                        lag -= TIME_PER_FRAME;
+                    }
+                }
+            }
+
+
             base.OnUpdateFrame(args);
         }
 
