@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Kursach
+﻿namespace Kursach
 {
     internal class Position
     {
@@ -13,10 +7,7 @@ namespace Kursach
             Row = row;
             Column = column;
         }
-
         public int Row { get; set; }
         public int Column { get; set; }
-
-
     }
 }
