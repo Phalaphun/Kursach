@@ -1,17 +1,7 @@
-﻿using OpenTK.Windowing.Desktop;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK.Windowing.Common.Input;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Runtime.CompilerServices;
-using System.Security.AccessControl;
+using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Kursach
@@ -37,7 +27,7 @@ namespace Kursach
             new Vector3(238/255f,130/255f,238/255f),//purpule
             new Vector3(255/255f,0,0),//red
         };
-        
+
 
         public Game(GameWindowSettings gSettings, NativeWindowSettings nSettings) : base(gSettings, nSettings)
         {
@@ -51,17 +41,16 @@ namespace Kursach
             cellSize = 22;
             w = cellSize * N;
             h = cellSize * M;
-            gameState = new GameStatus(M, N);
-
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
             GL.Ortho(0, 700, 0, 500, -1, 1);
             GL.MatrixMode(MatrixMode.Modelview);
 
+            gameState = new GameStatus(M, N);
             imageControls = new ImageControl(M, N, cellSize, true);
 
 
-            
+
 
             //запускается только в начале. начальные настройки можно сюда поставить
         }
@@ -80,7 +69,7 @@ namespace Kursach
             base.OnRenderFrame(args);
             GL.ClearColor(Color4.Black);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
- 
+
 
             DrawAll(gameState, imageControls);
             DrawRedLine();
@@ -113,8 +102,8 @@ namespace Kursach
 
         private void SetupGameCanvas(ImageControl d, Grid grid)
         {
-            
-            
+
+
             for (int i = 0; i < M; i++)
             {
                 for (int j = 0; j < N; j++)
@@ -169,7 +158,7 @@ namespace Kursach
         {
             base.OnKeyDown(e);
 
-            if(gameState.GameOver)
+            if (gameState.GameOver)
             {
                 return;
             }
@@ -186,7 +175,7 @@ namespace Kursach
             }
 
 
-            
+
         }
 
 
