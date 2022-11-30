@@ -15,6 +15,7 @@ namespace Kursach
         int M;
         ImageControl imageControls;
         GameStatus gameState;
+        Vector2 cursorPosition;
         private Vector3[] ColorImages = new Vector3[]
         {
             new Vector3(0,0,0), //black
@@ -62,23 +63,41 @@ namespace Kursach
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             DrawAll(gameState, imageControls);
             DrawRedLine();
+            if(gameState.GameOver)
+            {
+                GL.Color3(128/255f,128/255f,128/255f);
+                GL.Rect(100,100,600,370);
+                GL.Color3(1, 1, 0);
+                GL.Rect(200,250,500,300);
+                GL.Rect(200,170,500,220);
+            }
+
             SwapBuffers();
         }
         double lag = 0;
         double TIME_PER_FRAME = 0.45;
+        int previouseScores;
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
             if (!gameState.GameOver)
             {
+                
                 lag += args.Time;
                 if (lag > TIME_PER_FRAME)
                 {
                     while (lag > TIME_PER_FRAME)
                     {
+                        previouseScores = gameState.Scores;
                         gameState.MoveBlockDown();
+                        this.Title = "Tetris        Scores: " + gameState.Scores.ToString();
                         lag -= TIME_PER_FRAME;
+                        if(previouseScores < gameState.Scores)
+                        {
+                            TIME_PER_FRAME -= 0.01;
+                        }
                     }
                 }
+                
             }
             base.OnUpdateFrame(args);
         }
@@ -142,5 +161,29 @@ namespace Kursach
                 }
             }
         }
+        protected override void OnMouseDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseDown(e);
+            if(gameState.GameOver)
+            {
+                //if(cursorPosition.X>200 && cursorPosition.X<500 && cursorPosition.Y>250&& cursorPosition.Y<300)
+                //{
+                //    this.Close();
+                //}
+                //else if()
+                //{ }
+                GL.PointSize(10f);
+                GL.Begin(PrimitiveType.Points);
+                GL.Vertex2(cursorPosition.X,cursorPosition.Y);
+                GL.End();
+            }
+        }
+        protected override void OnMouseMove(MouseMoveEventArgs e)
+        {
+            base.OnMouseMove(e);
+            cursorPosition = new Vector2((e.Position.X), (e.Position.Y) );
+            
+        }
+
     }
 }

@@ -6,11 +6,11 @@
         {
             new BlockI(),
             new BlockO(),
-            new BlockJ(),
-            new BlockL(),
-            new BlockS(),
-            new BlockT(),
-            new BlockZ(),
+            //new BlockJ(),
+            //new BlockL(),
+            //new BlockS(),
+            //new BlockT(),
+            //new BlockZ(),
         };
         private Random random = new Random(); 
         public Block NextBlock { get; set; }

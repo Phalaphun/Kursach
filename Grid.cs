@@ -5,6 +5,7 @@
         private int[,] grid;
         private int rows;
         private int columns;
+        public int Cleared { get; set; }
         public int Rows { get { return rows;} }
         public int Columns { get { return columns; } }
         public Grid(int rows, int columns)
@@ -93,12 +94,12 @@
         }
         public int ClearRows()
         {
-            int cleared = 0;
+            
             while (RowFullCheckerAll())
             {
-                cleared+=ClearAllRows();
+                Cleared += ClearAllRows();
             }
-            return cleared;
+            return Cleared;
         }
         private bool RowFullCheckerAll()
         {

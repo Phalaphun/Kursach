@@ -21,6 +21,7 @@
             _BlockQueue = new BlockQueue();
             CurrentBlock = _BlockQueue.GetAndUpdate();
         }
+        public int Scores { get; set; }
         private bool BlockFits()
         {
             foreach(Position p in CurrentBlock.TilePositions())
@@ -73,8 +74,8 @@
             {
                 _Grid[p.Row, p.Column] = CurrentBlock.Id;
             }
-            //_Grid.ClearAllRows();
-            _Grid.ClearRows();
+            //Scores += _Grid.ClearAllRows();
+            Scores=_Grid.ClearRows();
 
             if(IsGameOver())
             {
