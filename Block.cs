@@ -16,7 +16,7 @@
             this.Id = Id;
             this.Tiles = Tiles;
             this.StartOffset = StartOffset;
-            offset = new Position(StartOffset.Row, StartOffset.Column);
+            offset = new Position(this.StartOffset.Row, this.StartOffset.Column);
         }
         public void Move(int rows, int columns)
         {

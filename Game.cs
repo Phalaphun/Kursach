@@ -19,6 +19,7 @@ namespace Kursach
         ImageControl imageControls;
         GameStatus gameState;
         Vector2 cursorPosition;
+        List<VisualFigure> figures = new List<VisualFigure>();
         private Vector3[] ColorImages = new Vector3[]
         {
             new Vector3(0,0,0), //black
@@ -48,6 +49,7 @@ namespace Kursach
             GL.MatrixMode(MatrixMode.Modelview);
             gameState = new GameStatus(M, N);
             imageControls = new ImageControl(M, N, cellSize, true);
+            figures.Add(new Button(200,250,100,250, Color4.DarkOrange));
 
 
             //if (( (float) this.ClientSize.X / this.ClientSize.Y) < 800.0 / 600.0) { 
@@ -90,11 +92,13 @@ namespace Kursach
             DrawRedLine();
             if (gameState.GameOver)
             {
-                GL.Color3(128 / 255f, 128 / 255f, 128 / 255f);
-                GL.Rect(100, 100, 600, 370);
-                GL.Color3(1, 1, 0);
-                GL.Rect(200, 250, 500, 300);
-                GL.Rect(200, 170, 500, 220);
+                //GL.Color3(128 / 255f, 128 / 255f, 128 / 255f);
+                //GL.Rect(100, 100, 600, 370);
+                //GL.Color3(1, 1, 0);
+                //GL.Rect(200, 250, 500, 300);
+                //GL.Rect(200, 170, 500, 220);
+                foreach (VisualFigure figure in figures)
+                    figure.Draw();
             }
 
             GL.PointSize(10f);
@@ -208,6 +212,14 @@ namespace Kursach
                 GL.Vertex2(cursorPosition.X,cursorPosition.Y);
                 GL.End();
             }
+
+            
+            for (int i = 0; i < figures.Count; i++)
+            {
+                if (figures[i].IsPointInFigure(cursorPosition))
+                    figures[i].OnMouseDown?.Invoke(e);
+            }
+
         }
         protected override void OnMouseMove(MouseMoveEventArgs e)
         {
@@ -215,6 +227,10 @@ namespace Kursach
             //cursorPosition = new Vector2((float)(e.Position.X/fi), 600-(float)(e.Position.Y*6/5));
             cursorPosition = new Vector2((float)(e.Position.X/fi), 600-(float)(e.Position.Y/fiY));
             
+        }
+        protected override void OnMouseUp(MouseButtonEventArgs e)
+        {
+            base.OnMouseUp(e);
         }
 
     }
