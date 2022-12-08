@@ -4,8 +4,73 @@
     {
         private Block[] blocks = new Block[]
         {
-            new BlockI(),
-            new BlockO(),
+            new Block( // BlockI
+                new Position[][]
+                {
+                    new Position[] { new(1,0), new(1,1), new(1,2), new(1,3) },//new Position(1,0)...
+                    new Position[] { new(0,2), new(1,2), new(2,2), new(3,2) },
+                    new Position[] { new(2,0), new(2,1), new(2,2), new(2,3) },
+                    new Position[] { new(0,1), new(1,1), new(2,1), new(3,1) }
+                }, new Position(-1, 3), 1
+                ), 
+            new Block( //J
+                new Position[][]
+                {
+                    new Position[] {new(0, 0), new(1, 0), new(1, 1), new(1, 2)},
+                    new Position[] {new(0, 1), new(0, 2), new(1, 1), new(2, 1)},
+                    new Position[] {new(1, 0), new(1, 1), new(1, 2), new(2, 2)},
+                    new Position[] {new(0, 1), new(1, 1), new(2, 1), new(2, 0)}
+                },new Position(-1, 3),2
+                ),
+            new Block(//L
+                new Position[][]
+                {
+                    new Position[] {new(0,2), new(1,0), new(1,1), new(1,2)},
+                    new Position[] {new(0,1), new(1,1), new(2,1), new(2,2)},
+                    new Position[] {new(1,0), new(1,1), new(1,2), new(2,0)},
+                    new Position[] {new(0,0), new(0,1), new(1,1), new(2,1)}
+                },new Position(0, 3),3
+                ),
+
+            new Block(//O
+                new Position[][]
+                {
+                    new Position[] { new(0,0), new(0,1), new(1,0), new(1,1) },
+                    new Position[] { new(0,0), new(0,1), new(1,0), new(1,1) },
+                    new Position[] { new(0,0), new(0,1), new(1,0), new(1,1) },
+                    new Position[] { new(0,0), new(0,1), new(1,0), new(1,1) }
+                }, new Position(0,3),4
+                ),
+            new Block( //S
+                new Position[][] 
+                {
+                    new Position[] { new(0,1), new(0,2), new(1,0), new(1,1) },
+                    new Position[] { new(0,1), new(1,1), new(1,2), new(2,2) },
+                    new Position[] { new(1,1), new(1,2), new(2,0), new(2,1) },
+                    new Position[] { new(0,0), new(1,0), new(1,1), new(2,1) }
+                },new Position(0,3),5
+                ),
+            new Block( // T
+                new Position[][] 
+                {
+                    new Position[] {new(0,1), new(1,0), new(1,1), new(1,2)},
+                    new Position[] {new(0,1), new(1,1), new(1,2), new(2,1)},
+                    new Position[] {new(1,0), new(1,1), new(1,2), new(2,1)},
+                    new Position[] {new(0,1), new(1,0), new(1,1), new(2,1)}
+                }, new Position(0,3),6
+                ),
+            new Block( // Z
+                new Position[][] 
+                {
+                    new Position[] {new(0,0), new(0,1), new(1,1), new(1,2)},
+                    new Position[] {new(0,2), new(1,1), new(1,2), new(2,1)},
+                    new Position[] {new(1,0), new(1,1), new(2,1), new(2,2)},
+                    new Position[] {new(0,1), new(1,0), new(1,1), new(2,0)}
+                }, new Position(0,3),7
+                )
+
+            //new BlockI(),
+            //new BlockO(),
             //new BlockJ(),
             //new BlockL(),
             //new BlockS(),

@@ -1,14 +1,21 @@
 ﻿namespace Kursach
 {
-    internal abstract class Block
+    internal  class Block
     {
-        protected abstract Position[][] Tiles { get; }
-        protected abstract Position StartOffset { get; }
-        public abstract int Id { get; }
+        protected virtual Position[][] Tiles { get; set; }
+        protected virtual Position StartOffset { get; set; }
+        public virtual int Id { get; set; }
         private int rotationState;
         private Position offset;
         public Block()
         {
+            offset = new Position(StartOffset.Row, StartOffset.Column);
+        }
+        public Block(Position[][] Tiles, Position StartOffset, int Id)
+        {
+            this.Id = Id;
+            this.Tiles = Tiles;
+            this.StartOffset = StartOffset;
             offset = new Position(StartOffset.Row, StartOffset.Column);
         }
         public void Move(int rows, int columns)
