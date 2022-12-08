@@ -3,6 +3,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using System.Drawing;
 
 namespace Kursach
 {
@@ -13,6 +14,8 @@ namespace Kursach
         int h;
         int N;
         int M;
+        double fi;
+        double fiY;
         ImageControl imageControls;
         GameStatus gameState;
         Vector2 cursorPosition;
@@ -34,17 +37,27 @@ namespace Kursach
         protected override void OnLoad()
         {
             base.OnLoad();
-            N = 12;
-            M = 20;
-            cellSize = 22;
+            N = 12;  // при 800 на 600 тут 40 - ширина
+            M = 22; // при 800 на 600 тут 30 - высота
+            cellSize = 20;
             w = cellSize * N;
             h = cellSize * M;
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
-            GL.Ortho(0, 700, 0, 500, -1, 1);
+            GL.Ortho(0, 800, 0, 600, -1, 1); // 0;0 находится в левом нижнем углу. У направлена вверх, х - направо
             GL.MatrixMode(MatrixMode.Modelview);
             gameState = new GameStatus(M, N);
             imageControls = new ImageControl(M, N, cellSize, true);
+
+
+            //if (( (float) this.ClientSize.X / this.ClientSize.Y) < 800.0 / 600.0) { 
+            
+            //    fi = this.ClientSize.X / 800.0f;
+            //}
+            //else
+            //{
+            //    fi = this.ClientSize.Y / 600.0f;
+            //}
         }
         protected override void OnUnload()
         {
@@ -52,6 +65,18 @@ namespace Kursach
         }
         protected override void OnResize(ResizeEventArgs e)
         {
+
+            //if (((float)e.Width / e.Height) < 800.0 / 600.0)
+            {
+
+                fi = e.Width / 800.0f;
+            }
+            //else
+            {
+                fiY = e.Height / 600.0f;
+                
+            }
+
             base.OnResize(e);
             GL.Viewport(0, 0, e.Width, e.Height);
         }
@@ -63,14 +88,19 @@ namespace Kursach
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             DrawAll(gameState, imageControls);
             DrawRedLine();
-            if(gameState.GameOver)
+            if (gameState.GameOver)
             {
-                GL.Color3(128/255f,128/255f,128/255f);
-                GL.Rect(100,100,600,370);
+                GL.Color3(128 / 255f, 128 / 255f, 128 / 255f);
+                GL.Rect(100, 100, 600, 370);
                 GL.Color3(1, 1, 0);
-                GL.Rect(200,250,500,300);
-                GL.Rect(200,170,500,220);
+                GL.Rect(200, 250, 500, 300);
+                GL.Rect(200, 170, 500, 220);
             }
+
+            GL.PointSize(10f);
+            GL.Begin(PrimitiveType.Points);
+            GL.Vertex2(cursorPosition);
+            GL.End();
 
             SwapBuffers();
         }
@@ -172,7 +202,8 @@ namespace Kursach
                 //}
                 //else if()
                 //{ }
-                GL.PointSize(10f);
+                GL.Color3(1, 0, 0);
+                GL.PointSize(100f);
                 GL.Begin(PrimitiveType.Points);
                 GL.Vertex2(cursorPosition.X,cursorPosition.Y);
                 GL.End();
@@ -181,7 +212,8 @@ namespace Kursach
         protected override void OnMouseMove(MouseMoveEventArgs e)
         {
             base.OnMouseMove(e);
-            cursorPosition = new Vector2((e.Position.X), (e.Position.Y) );
+            //cursorPosition = new Vector2((float)(e.Position.X/fi), 600-(float)(e.Position.Y*6/5));
+            cursorPosition = new Vector2((float)(e.Position.X/fi), 600-(float)(e.Position.Y/fiY));
             
         }
 
