@@ -2,9 +2,9 @@
 {
     internal  class Block
     {
-        protected virtual Position[][] Tiles { get; set; }
-        protected virtual Position StartOffset { get; set; }
-        public virtual int Id { get; set; }
+        protected Position[][] Tiles { get; set; }
+        protected Position StartOffset { get; set; }
+        public int Id { get; set; }
         private int rotationState;
         private Position offset;
         public Block()
