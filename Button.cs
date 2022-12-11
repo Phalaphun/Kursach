@@ -46,9 +46,7 @@ namespace Kursach
             return IsPointInFigure(point.X, point.Y);
         }
 
-        public override void OnMouseDown(MouseButtonEventArgs e)
-        {
-        }
+        
         public override void OnMouseMove(MouseMoveEventArgs e)
         {
         }

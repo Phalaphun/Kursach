@@ -2,38 +2,51 @@
 {
     internal  class Block
     {
-        protected Position[][] Tiles { get; set; }
-        protected Position StartOffset { get; set; }
+        internal Position[][] Tiles { get; set; }
+        internal Position StartOffset { get; set; }
         public int Id { get; set; }
+        internal Position Offset { get => offset; set => offset = value; }
+
         private int rotationState;
         private Position offset;
         public Block()
         {
-            offset = new Position(StartOffset.Row, StartOffset.Column);
+            Offset = new Position(StartOffset.Row, StartOffset.Column);
         }
         public Block(Position[][] Tiles, Position StartOffset, int Id)
         {
             this.Id = Id;
             this.Tiles = Tiles;
             this.StartOffset = StartOffset;
-            offset = new Position(this.StartOffset.Row, this.StartOffset.Column);
+            Offset = new Position(this.StartOffset.Row, this.StartOffset.Column);
         }
         public void Move(int rows, int columns)
         {
-            offset.Row += rows;
-            offset.Column += columns;
+            Offset.Row += rows;
+            Offset.Column += columns;
         }
         public void Reset()
         {
             rotationState = 0;
-            offset.Row = StartOffset.Row;
-            offset.Column = StartOffset.Column;
+            Offset.Row = StartOffset.Row;
+            Offset.Column = StartOffset.Column;
         }
         public IEnumerable<Position> TilePositions()
         {   
             foreach(Position p in Tiles[rotationState])
             {
-                yield return new Position(p.Row + offset.Row, p.Column + offset.Column);
+                //yield return new Position(p.Row + Offset.Row, p.Column + Offset.Column);
+                if(p.Column + Offset.Column >= 12)
+                {
+                    
+                    yield return new Position(p.Row + Offset.Row, p.Column + Offset.Column-12);
+                }
+                else if(p.Column + Offset.Column < 0)
+                {
+                    yield return new Position(p.Row + Offset.Row, p.Column + Offset.Column+12);
+                }
+                else
+                yield return new Position(p.Row + Offset.Row, p.Column + Offset.Column);
             }
         }
         public void RotateCW()

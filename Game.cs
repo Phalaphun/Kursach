@@ -30,6 +30,7 @@ namespace Kursach
             new Vector3(0,128/255f,0),//green
             new Vector3(238/255f,130/255f,238/255f),//purpule
             new Vector3(255/255f,0,0),//red
+            new Vector3(1,1,1),//white
         };
         public Game(GameWindowSettings gSettings, NativeWindowSettings nSettings) : base(gSettings, nSettings)
         {
@@ -45,10 +46,11 @@ namespace Kursach
             h = cellSize * M;
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
-            GL.Ortho(0, 800, 0, 600, -1, 1); // 0;0 находится в левом нижнем углу. У направлена вверх, х - направо
+            GL.Ortho(0, 1600, 0, 1200, -1, 1); // 0;0 находится в левом нижнем углу. У направлена вверх, х - направо
             GL.MatrixMode(MatrixMode.Modelview);
             gameState = new GameStatus(M, N);
-            imageControls = new ImageControl(M, N, cellSize, true);
+            //imageControls = new ImageControl(M, N, cellSize, true);
+            imageControls = new ImageControl(M, N, cellSize, new Vector2(700,500));
             figures.Add(new Button(200,250,100,250, Color4.DarkOrange));
 
 
@@ -86,10 +88,23 @@ namespace Kursach
         protected override void OnRenderFrame(FrameEventArgs args)
         {
             base.OnRenderFrame(args);
+            Vector2 Center = new Vector2(700, 500);
+            
+
+
+
             GL.ClearColor(Color4.Black);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
+
+            GL.PointSize(5f);
+            GL.Color4(Color4.Red);
+            GL.Begin(PrimitiveType.Points);
+            GL.Vertex2(Center);
+            GL.End();
+            //imageControls.Grid1[0][3].Draw();
             DrawAll(gameState, imageControls);
-            DrawRedLine();
+            //DrawRedLine();
             if (gameState.GameOver)
             {
                 //GL.Color3(128 / 255f, 128 / 255f, 128 / 255f);
@@ -122,7 +137,7 @@ namespace Kursach
                     while (lag > TIME_PER_FRAME)
                     {
                         previouseScores = gameState.Scores;
-                        gameState.MoveBlockDown();
+                        //gameState.MoveBlockDown();
                         this.Title = "Tetris        Scores: " + gameState.Scores.ToString();
                         lag -= TIME_PER_FRAME;
                         if(previouseScores < gameState.Scores)
