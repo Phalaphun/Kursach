@@ -14,9 +14,9 @@ namespace Kursach
         double TIME_PER_FRAME = 0.45;
         CircleCells circleCells;
         GameStatus gameState;
-        Vector2 cursorPosition, Center;
+        Vector2 cursorPosition, centerPoint;
         List<VisualFigure> figures = new List<VisualFigure>();
-        private Vector3[] ColorImages = new Vector3[]
+        private Vector3[] ColorMass = new Vector3[]
         {
             new Vector3(0,0,0), //black
             new Vector3(0,255/255f,255/255f), //cyan
@@ -35,19 +35,19 @@ namespace Kursach
         protected override void OnLoad()
         {
             base.OnLoad();
-            width = 12;  // при 800 на 600 тут 40 - ширина
-            height = 22; // при 800 на 600 тут 30 - высота
+            width = 12;  
+            height = 22; 
             ortoHeight = 1200;
             ortoWidth = 1600;
             r = 60;
             dr = 20;
-            Center = new Vector2(510, 510);
+            centerPoint = new Vector2(510, 510);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
             GL.Ortho(0, ortoWidth, 0, ortoHeight, -1, 1); // 0;0 находится в левом нижнем углу. У направлена вверх, х - направо
             GL.MatrixMode(MatrixMode.Modelview);
             gameState = new GameStatus(height, width);
-            circleCells = new CircleCells(height, width, Center, r,dr);
+            circleCells = new CircleCells(height, width, centerPoint, r,dr);
             figures.Add(new Button(200,250,100,250, Color4.DarkOrange));
         }
         protected override void OnUnload()
@@ -65,7 +65,7 @@ namespace Kursach
                 GL.PointSize(5f);
                 GL.Color4(Color4.Red);
                 GL.Begin(PrimitiveType.Points);
-                GL.Vertex2(Center);
+                GL.Vertex2(centerPoint);
                 GL.End();
             }
 
@@ -159,7 +159,7 @@ namespace Kursach
                 for (int j = 0; j < width; j++)
                 {
                     int id = grid[i, j];
-                    GL.Color3(ColorImages[id]);
+                    GL.Color3(ColorMass[id]);
                     d.Grid1[i][j].Draw();
                 }
             }
@@ -168,7 +168,7 @@ namespace Kursach
         {
             foreach (Position p in block.TilePositions())
             {
-                GL.Color3(ColorImages[block.Id]);
+                GL.Color3(ColorMass[block.Id]);
                 circleCells.Grid1[p.Row][p.Column].Draw();
             }
         }
@@ -176,6 +176,11 @@ namespace Kursach
         {
             DrawCircleCells(circleCells, gameState._Grid);
             DrawActiveBlock(gameState.CurrentBlock);
+        }
+        private void Restart()
+        {
+            gameState = new GameStatus(height, width);
+            circleCells = new CircleCells(height, width, centerPoint, r, dr);
         }
     }
 }

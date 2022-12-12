@@ -16,6 +16,7 @@
         public Grid _Grid { get; }
         public BlockQueue _BlockQueue { get; }
         public bool GameOver { get; set; }
+        public int Scores { get; set; }
         public GameStatus(int height, int width)
         {
             _Grid = new Grid(height, width);
@@ -24,7 +25,7 @@
             CurrentBlock = _BlockQueue.GetAndUpdate();
             Block.Width = width;
         }
-        public int Scores { get; set; }
+        
         private bool BlockFits()
         {
             foreach (Position p in CurrentBlock.TilePositions())
@@ -107,19 +108,9 @@
                         }
                     }
                 }
-
-                //_Grid[p.Row, p.Column + 1] = 0;
-                //_Grid[p.Row, p.Column - 1] = 0;
-                //_Grid[p.Row + 1, p.Column + 1] = 0;
-                //_Grid[p.Row + 1, p.Column - 1] = 0;
-                //_Grid[p.Row - 1, p.Column + 1] = 0;
-                //_Grid[p.Row - 1, p.Column - 1] = 0;
-                //_Grid[p.Row + 1, p.Column] = 0;
-                //_Grid[p.Row - 1, p.Column] = 0;
-                //_Grid[p.Row, p.Column] = 0;
             }
 
-            Scores = _Grid.ClearRows();
+            Scores = _Grid.ClearAllRowsFull();
 
             if (IsGameOver())
             {

@@ -75,7 +75,7 @@
             }
         }
 
-        public int ClearAllRows()
+        public int ClearRow()
         {
             int cleared = 0; //нужна чтобы определить на сколько потом сдвинуть все строчки вниз
             for (int r = Rows - 1; r > 0; r--) // идём сверху вниз см.MoveRowDown 
@@ -92,12 +92,12 @@
             }
             return cleared;
         }
-        public int ClearRows()
+        public int ClearAllRowsFull()
         {
             
             while (RowFullCheckerAll())
             {
-                Cleared += ClearAllRows();
+                Cleared += ClearRow();
             }
             return Cleared;
         }

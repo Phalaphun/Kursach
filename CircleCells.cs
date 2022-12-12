@@ -17,7 +17,7 @@ namespace Kursach
             {
                 for(int j=0;j<width;j++)
                 {
-                    Grid1[i][j] = new Cell(Center, j, i, r, dr, width); //60,20
+                    Grid1[i][j] = new Cell(Center, j, i, r, dr, width);
                 }
             }
         }
