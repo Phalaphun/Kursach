@@ -12,8 +12,8 @@ namespace Kursach
         int cellSize;
         int w;
         int h;
-        int N;
-        int M;
+        int width;
+        int height;
         double fi;
         double fiY;
         ImageControl imageControls;
@@ -39,29 +39,19 @@ namespace Kursach
         protected override void OnLoad()
         {
             base.OnLoad();
-            N = 12;  // при 800 на 600 тут 40 - ширина
-            M = 22; // при 800 на 600 тут 30 - высота
+            width = 12;  // при 800 на 600 тут 40 - ширина
+            height = 22; // при 800 на 600 тут 30 - высота
             cellSize = 20;
-            w = cellSize * N;
-            h = cellSize * M;
+            w = cellSize * width;
+            h = cellSize * height;
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
             GL.Ortho(0, 1600, 0, 1200, -1, 1); // 0;0 находится в левом нижнем углу. У направлена вверх, х - направо
             GL.MatrixMode(MatrixMode.Modelview);
-            gameState = new GameStatus(M, N);
+            gameState = new GameStatus(height, width);
             //imageControls = new ImageControl(M, N, cellSize, true);
-            imageControls = new ImageControl(M, N, cellSize, new Vector2(700,500));
+            imageControls = new ImageControl(height, width, cellSize, new Vector2(700,500));
             figures.Add(new Button(200,250,100,250, Color4.DarkOrange));
-
-
-            //if (( (float) this.ClientSize.X / this.ClientSize.Y) < 800.0 / 600.0) { 
-            
-            //    fi = this.ClientSize.X / 800.0f;
-            //}
-            //else
-            //{
-            //    fi = this.ClientSize.Y / 600.0f;
-            //}
         }
         protected override void OnUnload()
         {
@@ -69,16 +59,12 @@ namespace Kursach
         }
         protected override void OnResize(ResizeEventArgs e)
         {
-
-            //if (((float)e.Width / e.Height) < 800.0 / 600.0)
             {
-
-                fi = e.Width / 800.0f;
+                fi = e.Width / 1600.0f;
             }
-            //else
+
             {
-                fiY = e.Height / 600.0f;
-                
+                fiY = e.Height / 1200.0f;
             }
 
             base.OnResize(e);
@@ -152,9 +138,9 @@ namespace Kursach
         }
         private void SetupGameCanvas(ImageControl d, Grid grid)
         {
-            for (int i = 0; i < M; i++)
+            for (int i = 0; i < height; i++)
             {
-                for (int j = 0; j < N; j++)
+                for (int j = 0; j < width; j++)
                 {
                     int id = grid[i, j];
                     GL.Color3(ColorImages[id]);
@@ -240,13 +226,14 @@ namespace Kursach
         {
             base.OnMouseMove(e);
             //cursorPosition = new Vector2((float)(e.Position.X/fi), 600-(float)(e.Position.Y*6/5));
-            cursorPosition = new Vector2((float)(e.Position.X/fi), 600-(float)(e.Position.Y/fiY));
+            cursorPosition = new Vector2((float)(e.Position.X/fi), 1200-(float)(e.Position.Y/fiY));
             
         }
         protected override void OnMouseUp(MouseButtonEventArgs e)
         {
             base.OnMouseUp(e);
         }
+         
 
     }
 }
