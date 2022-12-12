@@ -9,7 +9,7 @@ namespace Kursach
     internal class Game : GameWindow
     {
         int width, height, previouseScores, r, dr;
-        double fiX, fiY, ortoWhidth,ortoHeight;
+        double fiX, fiY, ortoWidth,ortoHeight;
         double lag = 0;
         double TIME_PER_FRAME = 0.45;
         CircleCells circleCells;
@@ -38,17 +38,16 @@ namespace Kursach
             width = 12;  // при 800 на 600 тут 40 - ширина
             height = 22; // при 800 на 600 тут 30 - высота
             ortoHeight = 1200;
-            ortoWhidth = 1600;
+            ortoWidth = 1600;
             r = 60;
             dr = 20;
-            Center = new Vector2(700, 500);
+            Center = new Vector2(510, 510);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
-            GL.Ortho(0, ortoWhidth, 0, ortoHeight, -1, 1); // 0;0 находится в левом нижнем углу. У направлена вверх, х - направо
+            GL.Ortho(0, ortoWidth, 0, ortoHeight, -1, 1); // 0;0 находится в левом нижнем углу. У направлена вверх, х - направо
             GL.MatrixMode(MatrixMode.Modelview);
             gameState = new GameStatus(height, width);
-            circleCells = new CircleCells(height, width, new Vector2(700,500),r,dr);
-
+            circleCells = new CircleCells(height, width, Center, r,dr);
             figures.Add(new Button(200,250,100,250, Color4.DarkOrange));
         }
         protected override void OnUnload()
@@ -111,7 +110,7 @@ namespace Kursach
         }
         protected override void OnResize(ResizeEventArgs e)
         {
-            fiX = e.Width / ortoWhidth;
+            fiX = e.Width / ortoWidth;
             fiY = e.Height / ortoHeight;
             base.OnResize(e);
             GL.Viewport(0, 0, e.Width, e.Height);
@@ -178,6 +177,5 @@ namespace Kursach
             DrawCircleCells(circleCells, gameState._Grid);
             DrawActiveBlock(gameState.CurrentBlock);
         }
-
     }
 }
