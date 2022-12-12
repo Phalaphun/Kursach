@@ -3,6 +3,7 @@
     internal class GameStatus
     {
         private Block currentBlock;
+        private int width;
         public Block CurrentBlock
         {
             get { return currentBlock; }
@@ -15,11 +16,13 @@
         public Grid _Grid { get; }
         public BlockQueue _BlockQueue { get; }
         public bool GameOver { get; set; }
-        public GameStatus(int M, int N)
+        public GameStatus(int height, int width)
         {
-            _Grid = new Grid(M, N);
+            _Grid = new Grid(height, width);
+            this.width = width;
             _BlockQueue = new BlockQueue();
             CurrentBlock = _BlockQueue.GetAndUpdate();
+            Block.Width = width;
         }
         public int Scores { get; set; }
         private bool BlockFits()
@@ -28,13 +31,13 @@
             {
                 if (!_Grid.Empty(p.Row, p.Column))
                     return false;
-                if (CurrentBlock.Offset.Column + p.Column >= 12)
+                if (CurrentBlock.Offset.Column + p.Column >= width)
                 {
-                    CurrentBlock.Offset.Column -= 12;
+                    CurrentBlock.Offset.Column -= width;
                 }
                 else if(p.Column + CurrentBlock.Offset.Column < 0)
                 {
-                    CurrentBlock.Offset.Column += 12;
+                    CurrentBlock.Offset.Column += width;
                 }
             }
             return true;

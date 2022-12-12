@@ -8,11 +8,11 @@
         public int Cleared { get; set; }
         public int Rows { get { return rows;} }
         public int Columns { get { return columns; } }
-        public Grid(int rows, int columns)
+        public Grid(int height, int width)
         {
-            this.rows = rows;
-            this.columns = columns;
-            grid = new int[rows, columns];
+            this.rows = height;
+            this.columns = width;
+            grid = new int[height, width];
         }
         public int this[int r, int c]
         {

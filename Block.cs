@@ -9,6 +9,7 @@
 
         private int rotationState;
         private Position offset;
+        static internal int Width { get; set; }
         public Block()
         {
             Offset = new Position(StartOffset.Row, StartOffset.Column);
@@ -39,11 +40,11 @@
                 if(p.Column + Offset.Column >= 12)
                 {
                     
-                    yield return new Position(p.Row + Offset.Row, p.Column + Offset.Column-12);
+                    yield return new Position(p.Row + Offset.Row, p.Column + Offset.Column - Width);
                 }
                 else if(p.Column + Offset.Column < 0)
                 {
-                    yield return new Position(p.Row + Offset.Row, p.Column + Offset.Column+12);
+                    yield return new Position(p.Row + Offset.Row, p.Column + Offset.Column + Width);
                 }
                 else
                 yield return new Position(p.Row + Offset.Row, p.Column + Offset.Column);

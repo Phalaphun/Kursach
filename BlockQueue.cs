@@ -77,14 +77,6 @@
                     new Position[] { new(0,0) }
                 }, new Position(0,4),8
                 ),
-
-            //new BlockI(),
-            //new BlockO(),
-            //new BlockJ(),
-            //new BlockL(),
-            //new BlockS(),
-            //new BlockT(),
-            //new BlockZ(),
         };
         private Random random = new Random(); 
         public Block NextBlock { get; set; }

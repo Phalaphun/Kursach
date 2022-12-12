@@ -3,22 +3,18 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using System.Drawing;
 
 namespace Kursach
 {
     internal class Game : GameWindow
     {
-        int cellSize;
-        int w;
-        int h;
-        int width;
-        int height;
-        double fi;
-        double fiY;
-        ImageControl imageControls;
+        int width, height, previouseScores, r, dr;
+        double fiX, fiY, ortoWhidth,ortoHeight;
+        double lag = 0;
+        double TIME_PER_FRAME = 0.45;
+        CircleCells circleCells;
         GameStatus gameState;
-        Vector2 cursorPosition;
+        Vector2 cursorPosition, Center;
         List<VisualFigure> figures = new List<VisualFigure>();
         private Vector3[] ColorImages = new Vector3[]
         {
@@ -41,67 +37,48 @@ namespace Kursach
             base.OnLoad();
             width = 12;  // при 800 на 600 тут 40 - ширина
             height = 22; // при 800 на 600 тут 30 - высота
-            cellSize = 20;
-            w = cellSize * width;
-            h = cellSize * height;
+            ortoHeight = 1200;
+            ortoWhidth = 1600;
+            r = 60;
+            dr = 20;
+            Center = new Vector2(700, 500);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
-            GL.Ortho(0, 1600, 0, 1200, -1, 1); // 0;0 находится в левом нижнем углу. У направлена вверх, х - направо
+            GL.Ortho(0, ortoWhidth, 0, ortoHeight, -1, 1); // 0;0 находится в левом нижнем углу. У направлена вверх, х - направо
             GL.MatrixMode(MatrixMode.Modelview);
             gameState = new GameStatus(height, width);
-            //imageControls = new ImageControl(M, N, cellSize, true);
-            imageControls = new ImageControl(height, width, cellSize, new Vector2(700,500));
+            circleCells = new CircleCells(height, width, new Vector2(700,500),r,dr);
+
             figures.Add(new Button(200,250,100,250, Color4.DarkOrange));
         }
         protected override void OnUnload()
         {
             base.OnUnload();
         }
-        protected override void OnResize(ResizeEventArgs e)
-        {
-            {
-                fi = e.Width / 1600.0f;
-            }
-
-            {
-                fiY = e.Height / 1200.0f;
-            }
-
-            base.OnResize(e);
-            GL.Viewport(0, 0, e.Width, e.Height);
-        }
-
         protected override void OnRenderFrame(FrameEventArgs args)
         {
             base.OnRenderFrame(args);
-            Vector2 Center = new Vector2(700, 500);
             
-
-
-
             GL.ClearColor(Color4.Black);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
+            {
+                GL.PointSize(5f);
+                GL.Color4(Color4.Red);
+                GL.Begin(PrimitiveType.Points);
+                GL.Vertex2(Center);
+                GL.End();
+            }
 
-            GL.PointSize(5f);
-            GL.Color4(Color4.Red);
-            GL.Begin(PrimitiveType.Points);
-            GL.Vertex2(Center);
-            GL.End();
-            //imageControls.Grid1[0][3].Draw();
-            DrawAll(gameState, imageControls);
-            //DrawRedLine();
+            DrawAll(gameState, circleCells);
+
             if (gameState.GameOver)
             {
-                //GL.Color3(128 / 255f, 128 / 255f, 128 / 255f);
-                //GL.Rect(100, 100, 600, 370);
-                //GL.Color3(1, 1, 0);
-                //GL.Rect(200, 250, 500, 300);
-                //GL.Rect(200, 170, 500, 220);
                 foreach (VisualFigure figure in figures)
                     figure.Draw();
             }
 
+            GL.Color4(Color4.BlueViolet);
             GL.PointSize(10f);
             GL.Begin(PrimitiveType.Points);
             GL.Vertex2(cursorPosition);
@@ -109,75 +86,35 @@ namespace Kursach
 
             SwapBuffers();
         }
-        double lag = 0;
-        double TIME_PER_FRAME = 0.45;
-        int previouseScores;
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
             if (!gameState.GameOver)
             {
-                
                 lag += args.Time;
                 if (lag > TIME_PER_FRAME)
                 {
                     while (lag > TIME_PER_FRAME)
                     {
                         previouseScores = gameState.Scores;
-                        //gameState.MoveBlockDown();
+                        gameState.MoveBlockDown();
                         this.Title = "Tetris        Scores: " + gameState.Scores.ToString();
                         lag -= TIME_PER_FRAME;
-                        if(previouseScores < gameState.Scores)
+                        if (previouseScores < gameState.Scores)
                         {
                             TIME_PER_FRAME -= 0.01;
                         }
                     }
                 }
-                
+
             }
             base.OnUpdateFrame(args);
         }
-        private void SetupGameCanvas(ImageControl d, Grid grid)
+        protected override void OnResize(ResizeEventArgs e)
         {
-            for (int i = 0; i < height; i++)
-            {
-                for (int j = 0; j < width; j++)
-                {
-                    int id = grid[i, j];
-                    GL.Color3(ColorImages[id]);
-                    d.Grid1[i][j].Draw();
-                }
-            }
-        }
-        private void DrawRedLine()
-        {
-            GL.Color3(1.0, 0.0, 0.0); // цвет наших линий, в данном слуае - красный
-            GL.Begin(PrimitiveType.Lines); // начинаем рисовать и указываем, что это линии
-            for (int i = 0; i < w; i += cellSize) // отрисовываем линии в ширину
-            {
-                GL.Vertex2(i, 0); GL.Vertex2(i, h); // рисуем прямую
-            }
-            for (int j = 0; j < h; j += cellSize) //отрисовываем линии в высоту
-            {
-                GL.Vertex2(0, j); GL.Vertex2(w, j); // рисуем ту же самую прямую, но в другом направлении
-            }
-            GL.Vertex2(0, h);
-            GL.Vertex2(w, h);
-            GL.Vertex2(w, 0);
-            GL.Vertex2(w, h);
-            GL.End(); // конец отрисовки
-        }
-        private void DrawBlock(Block block)
-        {
-            foreach (Position p in block.TilePositions())
-            {
-                GL.Color3(ColorImages[block.Id]);
-                imageControls.Grid1[p.Row][p.Column].Draw();
-            }
-        }
-        private void DrawAll(GameStatus gameState, ImageControl d)
-        {
-            SetupGameCanvas(imageControls, gameState._Grid);
-            DrawBlock(gameState.CurrentBlock);
+            fiX = e.Width / ortoWhidth;
+            fiY = e.Height / ortoHeight;
+            base.OnResize(e);
+            GL.Viewport(0, 0, e.Width, e.Height);
         }
         protected override void OnKeyDown(KeyboardKeyEventArgs e)
         {
@@ -199,22 +136,6 @@ namespace Kursach
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             base.OnMouseDown(e);
-            if(gameState.GameOver)
-            {
-                //if(cursorPosition.X>200 && cursorPosition.X<500 && cursorPosition.Y>250&& cursorPosition.Y<300)
-                //{
-                //    this.Close();
-                //}
-                //else if()
-                //{ }
-                GL.Color3(1, 0, 0);
-                GL.PointSize(100f);
-                GL.Begin(PrimitiveType.Points);
-                GL.Vertex2(cursorPosition.X,cursorPosition.Y);
-                GL.End();
-            }
-
-            
             for (int i = 0; i < figures.Count; i++)
             {
                 if (figures[i].IsPointInFigure(cursorPosition))
@@ -225,15 +146,38 @@ namespace Kursach
         protected override void OnMouseMove(MouseMoveEventArgs e)
         {
             base.OnMouseMove(e);
-            //cursorPosition = new Vector2((float)(e.Position.X/fi), 600-(float)(e.Position.Y*6/5));
-            cursorPosition = new Vector2((float)(e.Position.X/fi), 1200-(float)(e.Position.Y/fiY));
+            cursorPosition = new Vector2((float)(e.Position.X/fiX), (float)ortoHeight - (float)(e.Position.Y/fiY));
             
         }
         protected override void OnMouseUp(MouseButtonEventArgs e)
         {
             base.OnMouseUp(e);
         }
-         
+        private void DrawCircleCells(CircleCells d, Grid grid)
+        {
+            for (int i = 0; i < height; i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    int id = grid[i, j];
+                    GL.Color3(ColorImages[id]);
+                    d.Grid1[i][j].Draw();
+                }
+            }
+        }
+        private void DrawActiveBlock(Block block)
+        {
+            foreach (Position p in block.TilePositions())
+            {
+                GL.Color3(ColorImages[block.Id]);
+                circleCells.Grid1[p.Row][p.Column].Draw();
+            }
+        }
+        private void DrawAll(GameStatus gameState, CircleCells d)
+        {
+            DrawCircleCells(circleCells, gameState._Grid);
+            DrawActiveBlock(gameState.CurrentBlock);
+        }
 
     }
 }
