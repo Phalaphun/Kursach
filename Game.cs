@@ -180,7 +180,7 @@ namespace Kursach
         {
             base.OnMouseUp(e);
         }
-        private void DrawCircleCells(GameStatus gameState) // а нах я сюда вообще параметр передаю если могу брать глобальный?
+        private void DrawCircleCells(GameStatus gameState) // а на кой я сюда вообще параметр передаю если могу брать глобальный?
         {
             for (int i = 0; i < height; i++)
             {
