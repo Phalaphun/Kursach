@@ -1,4 +1,6 @@
-﻿namespace Kursach
+﻿using OpenTK.Mathematics;
+
+namespace Kursach
 {
     internal class GameStatus
     {
@@ -13,13 +15,13 @@
                 currentBlock.Reset(); //устанавливаем начальное положение
             }
         }
-        public Grid _Grid { get; }
+        public CircleCells CircleCell{ get; }
         public BlockQueue _BlockQueue { get; }
         public bool GameOver { get; set; }
         public int Scores { get; set; }
-        public GameStatus(int height, int width)
+        public GameStatus(int height, int width, Vector2 centerPoint,int r, int dr )
         {
-            _Grid = new Grid(height, width);
+            CircleCell = new CircleCells(height, width, centerPoint, r, dr);
             this.width = width;
             _BlockQueue = new BlockQueue();
             CurrentBlock = _BlockQueue.GetAndUpdate();
@@ -30,7 +32,7 @@
         {
             foreach (Position p in CurrentBlock.TilePositions())
             {
-                if (!_Grid.Empty(p.Row, p.Column))
+                if (!CircleCell.Empty(p.Row, p.Column))
                     return false;
                 if (CurrentBlock.Offset.Column + p.Column >= width)
                 {
@@ -81,13 +83,13 @@
         }
         private bool IsGameOver()
         {
-            return !(_Grid.RowEmptyChecker(0) && _Grid.RowEmptyChecker(1));
+            return !(CircleCell.RowEmptyChecker(0) && CircleCell.RowEmptyChecker(1));
         }
         private void PlaceBlock()
         {
             foreach (Position p in CurrentBlock.TilePositions())
             {
-                _Grid[p.Row, p.Column] = CurrentBlock.Id;
+                CircleCell[p.Row, p.Column] = CurrentBlock.Id;
             }
             //Scores += _Grid.ClearAllRows();
 
@@ -101,16 +103,16 @@
                     {
                         for (int j = -1; j <= 1; j++)
                         {
-                            if (_Grid.Insider(p.Row + i, p.Column + j))
+                            if (CircleCell.Insider(p.Row + i, p.Column + j))
                             {
-                                _Grid[p.Row + i, p.Column + j] = 0;
+                                CircleCell[p.Row + i, p.Column + j] = 0;
                             }
                         }
                     }
                 }
             }
 
-            Scores = _Grid.ClearAllRowsFull();
+            Scores = CircleCell.ClearAllRowsFull();
 
             if (IsGameOver())
             {

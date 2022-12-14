@@ -8,13 +8,14 @@ namespace Kursach
 {
     internal class Game : GameWindow
     {
-        int width, height, previouseScores, r, dr;
+        int width, height, previouseScores, r, dr, textureId;
         double fiX, fiY, ortoWidth,ortoHeight;
-        double lag = 0;
-        double TIME_PER_FRAME = 0.45;
-        CircleCells circleCells;
+        double lag = 0, TIME_PER_FRAME = 0.45;
+        bool pause=false;
         GameStatus gameState;
         Vector2 cursorPosition, centerPoint;
+        Button restart = new Button(1200, 800, 300, 200, Color4.Gray);
+        Button close = new Button(1200, 500, 300, 200, Color4.Gray);
         List<VisualFigure> figures = new List<VisualFigure>();
         private Vector3[] ColorMass = new Vector3[]
         {
@@ -28,6 +29,7 @@ namespace Kursach
             new Vector3(255/255f,0,0),//red
             new Vector3(1,1,1),//white
         };
+        TextRenderer tr;
         public Game(GameWindowSettings gSettings, NativeWindowSettings nSettings) : base(gSettings, nSettings)
         {
 
@@ -46,9 +48,15 @@ namespace Kursach
             GL.LoadIdentity();
             GL.Ortho(0, ortoWidth, 0, ortoHeight, -1, 1); // 0;0 находится в левом нижнем углу. У направлена вверх, х - направо
             GL.MatrixMode(MatrixMode.Modelview);
-            gameState = new GameStatus(height, width);
-            circleCells = new CircleCells(height, width, centerPoint, r,dr);
-            figures.Add(new Button(200,250,100,250, Color4.DarkOrange));
+            gameState = new GameStatus(height, width, centerPoint, r, dr);
+            //circleCells = new CircleCells(height, width, centerPoint, r,dr);
+            textureId = ContentPipe.LoadTexture(@"Content\Verdana_B_alpha.png");
+            tr = new TextRenderer(16, 16, textureId, (float)ortoWidth, (float)ortoHeight);
+            figures.Add(restart);
+            figures.Add(close);
+            close.OnMouseDown += CloseEvent;
+            restart.OnMouseDown += Restart;
+            
         }
         protected override void OnUnload()
         {
@@ -69,13 +77,11 @@ namespace Kursach
                 GL.End();
             }
 
-            DrawAll(gameState, circleCells);
+            DrawAll(gameState);
 
-            if (gameState.GameOver)
-            {
-                foreach (VisualFigure figure in figures)
-                    figure.Draw();
-            }
+
+            foreach (VisualFigure figure in figures)
+                figure.Draw();
 
             GL.Color4(Color4.BlueViolet);
             GL.PointSize(10f);
@@ -83,28 +89,50 @@ namespace Kursach
             GL.Vertex2(cursorPosition);
             GL.End();
 
+
+            tr.TextRender(1280, 880, 20, "RESTART", 0.9f);
+            tr.TextRender(1280, 580, 25, "CLOSE", 0.9f);
+
+
+            tr.TextRender(100, 1100, 25, "SCORE:" + gameState.Scores.ToString(), 0.9f);
+
+            if(gameState.GameOver)
+            {
+                GL.Color4(Color4.SlateGray);
+                GL.Begin(PrimitiveType.Quads);
+                GL.Vertex2(500, 300);
+                GL.Vertex2(500, 300 + 500);
+                GL.Vertex2(500 + 500, 300 + 500);
+                GL.Vertex2(500 + 500, 300);
+                GL.End();
+                tr.TextRender(640, 530, 25, "GAME OVER", 0.9f);
+            }
+
             SwapBuffers();
         }
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
-            if (!gameState.GameOver)
+            if (!pause)
             {
-                lag += args.Time;
-                if (lag > TIME_PER_FRAME)
+                if (!gameState.GameOver)
                 {
-                    while (lag > TIME_PER_FRAME)
+                    lag += args.Time;
+                    if (lag > TIME_PER_FRAME)
                     {
-                        previouseScores = gameState.Scores;
-                        gameState.MoveBlockDown();
-                        this.Title = "Tetris        Scores: " + gameState.Scores.ToString();
-                        lag -= TIME_PER_FRAME;
-                        if (previouseScores < gameState.Scores)
+                        while (lag > TIME_PER_FRAME)
                         {
-                            TIME_PER_FRAME -= 0.01;
+                            previouseScores = gameState.Scores;
+                            gameState.MoveBlockDown();
+                            this.Title = "Tetris        Scores: " + gameState.Scores.ToString();
+                            lag -= TIME_PER_FRAME;
+                            if (previouseScores < gameState.Scores)
+                            {
+                                TIME_PER_FRAME -= 0.01;
+                            }
                         }
                     }
-                }
 
+                } 
             }
             base.OnUpdateFrame(args);
         }
@@ -128,7 +156,7 @@ namespace Kursach
                     case Keys.Right: gameState.MoveBlockRight(); break;
                     case Keys.Up: gameState.RotateBlockCW(); break;
                     case Keys.Down: gameState.MoveBlockDown(); break;
-                    case Keys.P:; break;
+                    case Keys.P:; Pause(); break;
                 }
             }
         }
@@ -152,15 +180,16 @@ namespace Kursach
         {
             base.OnMouseUp(e);
         }
-        private void DrawCircleCells(CircleCells d, Grid grid)
+        private void DrawCircleCells(GameStatus gameState) // а на кой я сюда вообще параметр передаю если могу брать глобальный?
         {
             for (int i = 0; i < height; i++)
             {
                 for (int j = 0; j < width; j++)
                 {
-                    int id = grid[i, j];
+                    //int id = grid[i, j];
+                    int id = gameState.CircleCell[i, j];
                     GL.Color3(ColorMass[id]);
-                    d.Grid1[i][j].Draw();
+                    gameState.CircleCell.Cells[i][j].Draw();
                 }
             }
         }
@@ -169,18 +198,30 @@ namespace Kursach
             foreach (Position p in block.TilePositions())
             {
                 GL.Color3(ColorMass[block.Id]);
-                circleCells.Grid1[p.Row][p.Column].Draw();
+                //circleCells.Cells[p.Row][p.Column].Draw();
+                gameState.CircleCell.Cells[p.Row][p.Column].Draw();
             }
         }
-        private void DrawAll(GameStatus gameState, CircleCells d)
+        private void DrawAll(GameStatus gameState)
         {
-            DrawCircleCells(circleCells, gameState._Grid);
+            DrawCircleCells(gameState);
             DrawActiveBlock(gameState.CurrentBlock);
         }
-        private void Restart()
+        private void Restart(MouseButtonEventArgs e)
         {
-            gameState = new GameStatus(height, width);
-            circleCells = new CircleCells(height, width, centerPoint, r, dr);
+            gameState = new GameStatus(height, width, centerPoint, r, dr);
+            //circleCells = new CircleCells(height, width, centerPoint, r, dr);
+        }
+        private void CloseEvent(MouseButtonEventArgs e)
+        {
+            this.Close();
+        }
+        private void Pause()
+        {
+            if(pause)
+                pause=false;
+            else
+                pause=true;
         }
     }
 }
