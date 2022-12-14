@@ -15,6 +15,8 @@ namespace Kursach
         CircleCells circleCells;
         GameStatus gameState;
         Vector2 cursorPosition, centerPoint;
+        Button restart = new Button(1200, 800, 300, 200, Color4.Gray);
+        Button close = new Button(1200, 500, 300, 200, Color4.Gray);
         List<VisualFigure> figures = new List<VisualFigure>();
         private Vector3[] ColorMass = new Vector3[]
         {
@@ -28,6 +30,8 @@ namespace Kursach
             new Vector3(255/255f,0,0),//red
             new Vector3(1,1,1),//white
         };
+        TextRenderer tr;
+        int textureId;
         public Game(GameWindowSettings gSettings, NativeWindowSettings nSettings) : base(gSettings, nSettings)
         {
 
@@ -48,7 +52,13 @@ namespace Kursach
             GL.MatrixMode(MatrixMode.Modelview);
             gameState = new GameStatus(height, width);
             circleCells = new CircleCells(height, width, centerPoint, r,dr);
-            figures.Add(new Button(200,250,100,250, Color4.DarkOrange));
+            textureId = ContentPipe.LoadTexture(@"Content\Verdana_B_alpha.png");
+            tr = new TextRenderer(16, 16, textureId, (float)ortoWidth, (float)ortoHeight);
+            figures.Add(restart);
+            figures.Add(close);
+            close.OnMouseDown += CloseEvent;
+            restart.OnMouseDown += Restart;
+            
         }
         protected override void OnUnload()
         {
@@ -71,17 +81,34 @@ namespace Kursach
 
             DrawAll(gameState, circleCells);
 
-            if (gameState.GameOver)
-            {
-                foreach (VisualFigure figure in figures)
-                    figure.Draw();
-            }
+
+            foreach (VisualFigure figure in figures)
+                figure.Draw();
 
             GL.Color4(Color4.BlueViolet);
             GL.PointSize(10f);
             GL.Begin(PrimitiveType.Points);
             GL.Vertex2(cursorPosition);
             GL.End();
+
+
+            tr.TextRender(1280, 880, 20, "RESTART", 0.9f);
+            tr.TextRender(1280, 580, 25, "CLOSE", 0.9f);
+
+
+            tr.TextRender(100, 1100, 25, "SCORE:" + gameState.Scores.ToString(), 0.9f);
+
+            if(gameState.GameOver)
+            {
+                GL.Color4(Color4.SlateGray);
+                GL.Begin(PrimitiveType.Quads);
+                GL.Vertex2(500, 300);
+                GL.Vertex2(500, 300 + 500);
+                GL.Vertex2(500 + 500, 300 + 500);
+                GL.Vertex2(500 + 500, 300);
+                GL.End();
+                tr.TextRender(640, 530, 25, "GAME OVER", 0.9f);
+            }
 
             SwapBuffers();
         }
@@ -177,10 +204,14 @@ namespace Kursach
             DrawCircleCells(circleCells, gameState._Grid);
             DrawActiveBlock(gameState.CurrentBlock);
         }
-        private void Restart()
+        private void Restart(MouseButtonEventArgs e)
         {
             gameState = new GameStatus(height, width);
             circleCells = new CircleCells(height, width, centerPoint, r, dr);
+        }
+        private void CloseEvent(MouseButtonEventArgs e)
+        {
+            this.Close();
         }
     }
 }
