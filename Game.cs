@@ -65,37 +65,24 @@ namespace Kursach
         protected override void OnRenderFrame(FrameEventArgs args)
         {
             base.OnRenderFrame(args);
-            
             GL.ClearColor(Color4.Black);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
-            {
                 GL.PointSize(5f);
                 GL.Color4(Color4.Red);
                 GL.Begin(PrimitiveType.Points);
                 GL.Vertex2(centerPoint);
                 GL.End();
-            }
-
             DrawAll(gameState);
-
-
             foreach (VisualFigure figure in figures)
                 figure.Draw();
-
             GL.Color4(Color4.BlueViolet);
             GL.PointSize(10f);
             GL.Begin(PrimitiveType.Points);
-            GL.Vertex2(cursorPosition);
+                GL.Vertex2(cursorPosition);
             GL.End();
-
-
             tr.TextRender(1280, 880, 20, "RESTART", 0.9f);
             tr.TextRender(1280, 580, 25, "CLOSE", 0.9f);
-
-
             tr.TextRender(100, 1100, 25, "SCORE:" + gameState.Scores.ToString(), 0.9f);
-
             if(gameState.GameOver)
             {
                 GL.Color4(Color4.SlateGray);
@@ -107,7 +94,6 @@ namespace Kursach
                 GL.End();
                 tr.TextRender(640, 530, 25, "GAME OVER", 0.9f);
             }
-
             SwapBuffers();
         }
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -156,7 +142,7 @@ namespace Kursach
                     case Keys.Right: gameState.MoveBlockRight(); break;
                     case Keys.Up: gameState.RotateBlockCW(); break;
                     case Keys.Down: gameState.MoveBlockDown(); break;
-                    case Keys.P:; Pause(); break;
+                    case Keys.P:; pause = pause ? false : true; break;
                 }
             }
         }
@@ -168,17 +154,11 @@ namespace Kursach
                 if (figures[i].IsPointInFigure(cursorPosition))
                     figures[i].OnMouseDown?.Invoke(e);
             }
-
         }
         protected override void OnMouseMove(MouseMoveEventArgs e)
         {
             base.OnMouseMove(e);
             cursorPosition = new Vector2((float)(e.Position.X/fiX), (float)ortoHeight - (float)(e.Position.Y/fiY));
-            
-        }
-        protected override void OnMouseUp(MouseButtonEventArgs e)
-        {
-            base.OnMouseUp(e);
         }
         private void DrawCircleCells(GameStatus gameState) // а на кой я сюда вообще параметр передаю если могу брать глобальный?
         {
@@ -186,9 +166,7 @@ namespace Kursach
             {
                 for (int j = 0; j < width; j++)
                 {
-                    //int id = grid[i, j];
-                    int id = gameState.CircleCell[i, j];
-                    GL.Color3(ColorMass[id]);
+                    GL.Color3(ColorMass[gameState.CircleCell[i, j]]);
                     gameState.CircleCell.Cells[i][j].Draw();
                 }
             }
@@ -198,7 +176,6 @@ namespace Kursach
             foreach (Position p in block.TilePositions())
             {
                 GL.Color3(ColorMass[block.Id]);
-                //circleCells.Cells[p.Row][p.Column].Draw();
                 gameState.CircleCell.Cells[p.Row][p.Column].Draw();
             }
         }
@@ -210,18 +187,10 @@ namespace Kursach
         private void Restart(MouseButtonEventArgs e)
         {
             gameState = new GameStatus(height, width, centerPoint, r, dr);
-            //circleCells = new CircleCells(height, width, centerPoint, r, dr);
         }
         private void CloseEvent(MouseButtonEventArgs e)
         {
             this.Close();
-        }
-        private void Pause()
-        {
-            if(pause)
-                pause=false;
-            else
-                pause=true;
         }
     }
 }

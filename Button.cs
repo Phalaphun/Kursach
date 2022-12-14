@@ -7,14 +7,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace Kursach
 {
     internal class Button : VisualFigure
     {
         float x, y, width, height;
         Color4 color;
-
         public Button(float x, float y, float width, float height, Color4 color)
         {
             this.x = x;
@@ -45,14 +43,5 @@ namespace Kursach
         {
             return IsPointInFigure(point.X, point.Y);
         }
-
-        
-        public override void OnMouseMove(MouseMoveEventArgs e)
-        {
-        }
-        public override void OnMouseUp(MouseButtonEventArgs e)
-        {
-        }
-
     }
 }

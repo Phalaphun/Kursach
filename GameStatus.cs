@@ -27,7 +27,6 @@ namespace Kursach
             CurrentBlock = _BlockQueue.GetAndUpdate();
             Block.Width = width;
         }
-        
         private bool BlockFits()
         {
             foreach (Position p in CurrentBlock.TilePositions())
@@ -71,15 +70,11 @@ namespace Kursach
         }
         public void MoveBlockRight()
         {
-
-
-
             CurrentBlock.Move(0, 1);
             if (!BlockFits())
             {
                 CurrentBlock.Move(0, -1);
             }
-           
         }
         private bool IsGameOver()
         {
@@ -91,9 +86,6 @@ namespace Kursach
             {
                 CircleCell[p.Row, p.Column] = CurrentBlock.Id;
             }
-            //Scores += _Grid.ClearAllRows();
-
-            // где - то тут
             if (currentBlock.Id == 8)
             {
                 foreach (Position p in CurrentBlock.TilePositions())
@@ -111,9 +103,7 @@ namespace Kursach
                     }
                 }
             }
-
             Scores = CircleCell.ClearAllRowsFull();
-
             if (IsGameOver())
             {
                 GameOver = true;

@@ -20,19 +20,15 @@ namespace Kursach
                     Cells[i][j] = new Cell(Center, j, i, r, dr, width);
                 }
             }
-
             this.rows = height;
             this.columns = width;
-
         }
 
         
-        private int rows;
-        private int columns;
+        private int rows, columns;
         public int Cleared { get; set; }
         public int Rows { get { return rows; } }
         public int Columns { get { return columns; } }
-        
         public int this[int r, int c]
         {
             get
@@ -84,7 +80,6 @@ namespace Kursach
                 if (r == Rows - 1)
                 {
                     cells[r][c].Id = 0;
-
                 }
                 else
                 {
@@ -133,8 +128,6 @@ namespace Kursach
             }
             return temp;
         }
-
-
     }
     internal class Cell
     {
@@ -159,18 +152,17 @@ namespace Kursach
         public void Draw()
         {
             GL.Begin(PrimitiveType.Polygon);
-            GL.Vertex2(x2,y2);
-            GL.Vertex2(x3,y3);
-            GL.Vertex2(x4,y4);
-            GL.Vertex2(x5,y5);
+                GL.Vertex2(x2,y2);
+                GL.Vertex2(x3,y3);
+                GL.Vertex2(x4,y4);
+                GL.Vertex2(x5,y5);
             GL.End();
-
             GL.Color4(Color4.Red);
             GL.Begin(PrimitiveType.LineLoop);
-            GL.Vertex2(x2, y2);
-            GL.Vertex2(x3, y3);
-            GL.Vertex2(x4, y4);
-            GL.Vertex2(x5, y5);
+                GL.Vertex2(x2, y2);
+                GL.Vertex2(x3, y3);
+                GL.Vertex2(x4, y4);
+                GL.Vertex2(x5, y5);
             GL.End();
         }
     }
