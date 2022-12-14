@@ -16,15 +16,15 @@ namespace Kursach
             }
         }
         public CircleCells CircleCell{ get; }
-        public BlockQueue _BlockQueue { get; }
+        public BlockQueue BQ { get; }
         public bool GameOver { get; set; }
         public int Scores { get; set; }
         public GameStatus(int height, int width, Vector2 centerPoint,int r, int dr )
         {
             CircleCell = new CircleCells(height, width, centerPoint, r, dr);
             this.width = width;
-            _BlockQueue = new BlockQueue();
-            CurrentBlock = _BlockQueue.GetAndUpdate();
+            BQ = new BlockQueue();
+            CurrentBlock = BQ.GetAndUpdate();
             Block.Width = width;
         }
         private bool BlockFits()
@@ -110,7 +110,7 @@ namespace Kursach
             }
             else
             {
-                CurrentBlock = _BlockQueue.GetAndUpdate();
+                CurrentBlock = BQ.GetAndUpdate();
             }
         }
         public void MoveBlockDown()
