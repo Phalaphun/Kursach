@@ -111,7 +111,10 @@ namespace Kursach
 
             while (RowFullCheckerAll())
             {
-                Cleared += ClearRow();
+                if (ClearRow() >= 4)
+                    Cleared += 2*ClearRow();
+                else 
+                    Cleared += ClearRow();
             }
             return Cleared;
         }
