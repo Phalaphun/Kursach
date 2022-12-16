@@ -11,7 +11,7 @@ namespace Kursach
     {
         int width, height, previouseScores, r, dr, textureId;
         double fiX, fiY, ortoWidth,ortoHeight;
-        double lag = 0, TIME_PER_FRAME = 0.45, difficult;
+        double lag = 0, TIME_PER_FRAME = 0.45;
         bool pause=false;
         GameStatus gameState;
         Vector2 cursorPosition, centerPoint;
@@ -31,7 +31,6 @@ namespace Kursach
             new Vector3(1,1,1),//white
         };
         TextRenderer tr;
-        XmlDocument xDoc = new XmlDocument();
         public Game(GameWindowSettings gSettings, NativeWindowSettings nSettings) : base(gSettings, nSettings)
         {
 
@@ -57,10 +56,6 @@ namespace Kursach
             figures.Add(close);
             close.OnMouseDown += CloseEvent;
             restart.OnMouseDown += Restart;
-            xDoc.Load("settings.xml"); XmlElement? xRoot = xDoc.DocumentElement;
-            difficult = double.Parse(xRoot.GetAttribute("Difficult"));
-
-
         }
         protected override void OnUnload()
         {
@@ -117,7 +112,7 @@ namespace Kursach
                             lag -= TIME_PER_FRAME;
                             if (previouseScores < gameState.Scores)
                             {
-                                TIME_PER_FRAME -= 0.05;
+                                TIME_PER_FRAME -= 0.03;
                             }
                         }
                     }
