@@ -82,6 +82,7 @@ namespace Kursach
             tr.TextRender(1280, 880, 20, "RESTART", 0.9f);
             tr.TextRender(1280, 580, 25, "CLOSE", 0.9f);
             tr.TextRender(100, 1100, 25, "SCORE:" + gameState.Scores.ToString(), 0.9f);
+            if(pause) { tr.TextRender(1000, 950, 10, "P", 3f); }
             if(gameState.GameOver)
             {
                 GL.Color4(Color4.SlateGray);
