@@ -112,7 +112,7 @@ namespace Kursach
                             lag -= TIME_PER_FRAME;
                             if (previouseScores < gameState.Scores)
                             {
-                                TIME_PER_FRAME -= 0.01;
+                                TIME_PER_FRAME -= 0.05;
                             }
                         }
                     }
