@@ -49,8 +49,6 @@ namespace Kursach
             GL.Ortho(0, ortoWidth, 0, ortoHeight, -1, 1); // 0;0 находится в левом нижнем углу. У направлена вверх, х - направо
             GL.MatrixMode(MatrixMode.Modelview);
             gameState = new GameStatus(height, width, centerPoint, r, dr);
-            //circleCells = new CircleCells(height, width, centerPoint, r,dr);
-            //textureId = ContentPipe.LoadTexture(@"Content\Verdana_B_alpha.png");
             textureId = ContentPipe.LoadTexture(@"Content\Consolas_Alpha_W.png");
             tr = new TextRenderer(16, 16, textureId, (float)ortoWidth, (float)ortoHeight);
             figures.Add(restart);

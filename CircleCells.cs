@@ -13,9 +13,9 @@ namespace Kursach
             {
                 Cells[i] = new Cell[width];
             }
-            for(int i = height - 1; i >= 0; i--)
+            for (int i = height - 1; i >= 0; i--)
             {
-                for(int j=0;j<width;j++)
+                for (int j = 0; j < width; j++)
                 {
                     Cells[i][j] = new Cell(Center, j, i, r, dr, width);
                 }
@@ -24,7 +24,7 @@ namespace Kursach
             this.columns = width;
         }
 
-        
+
         private int rows, columns;
         public int Cleared { get; set; }
         public int Rows { get { return rows; } }
@@ -83,7 +83,7 @@ namespace Kursach
                 }
                 else
                 {
-                    cells[r+numRows][c].Id = cells[r][c].Id;
+                    cells[r + numRows][c].Id = cells[r][c].Id;
                     cells[r][c].Id = 0;
                 }
             }
@@ -111,11 +111,9 @@ namespace Kursach
 
             while (RowFullCheckerAll())
             {
-                if (ClearRow() >= 4)
-                    Cleared += 2*ClearRow();
-                else 
-                    Cleared += ClearRow();
+                Cleared += ClearRow();
             }
+            if(Cleared >= 4) { return 2*Cleared; }
             return Cleared;
         }
         private bool RowFullCheckerAll()
@@ -139,12 +137,12 @@ namespace Kursach
         public int Id { get { return id; } set { id = value; } }
         public Cell(Vector2 Center, int j, int i, int r, int dr, int width)
         {
-            float dAlpha =  2 * (float)Math.PI / width;
+            float dAlpha = 2 * (float)Math.PI / width;
             x2 = Center.X + (r + i * dr) * (float)Math.Cos(j * dAlpha); // r - внутренний радиус, к-внешний(хотя скорее это ∆r, иначе говоря шаг), i- номер круга, j- число блоков в круге
             y2 = Center.Y + (r + i * dr) * (float)Math.Sin(j * dAlpha);
 
             x3 = Center.X + (r + i * dr + dr) * (float)Math.Cos(j * dAlpha);
-            y3 = Center.Y + (r + i* dr + dr) * (float)Math.Sin(j * dAlpha);
+            y3 = Center.Y + (r + i * dr + dr) * (float)Math.Sin(j * dAlpha);
 
             x4 = Center.X + (r + i * dr + dr) * (float)Math.Cos((j + 1) * dAlpha);
             y4 = Center.Y + (r + i * dr + dr) * (float)Math.Sin((j + 1) * dAlpha);
@@ -155,17 +153,17 @@ namespace Kursach
         public void Draw()
         {
             GL.Begin(PrimitiveType.Polygon);
-                GL.Vertex2(x2,y2);
-                GL.Vertex2(x3,y3);
-                GL.Vertex2(x4,y4);
-                GL.Vertex2(x5,y5);
+            GL.Vertex2(x2, y2);
+            GL.Vertex2(x3, y3);
+            GL.Vertex2(x4, y4);
+            GL.Vertex2(x5, y5);
             GL.End();
             GL.Color4(Color4.Red);
             GL.Begin(PrimitiveType.LineLoop);
-                GL.Vertex2(x2, y2);
-                GL.Vertex2(x3, y3);
-                GL.Vertex2(x4, y4);
-                GL.Vertex2(x5, y5);
+            GL.Vertex2(x2, y2);
+            GL.Vertex2(x3, y3);
+            GL.Vertex2(x4, y4);
+            GL.Vertex2(x5, y5);
             GL.End();
         }
     }
