@@ -56,6 +56,7 @@ namespace Kursach
             buttons.Add(close);
             close.OnMouseDown += CloseEvent;
             restart.OnMouseDown += Restart;
+            tr.TextRender(1280, 880, 20, "RESTART", 0.9f);
         }
         protected override void OnUnload()
         {
@@ -81,9 +82,11 @@ namespace Kursach
             GL.Begin(PrimitiveType.Points);
                 GL.Vertex2(cursorPosition);
             GL.End();
-            tr.TextRender(1280, 880, 20, "RESTART", 0.9f);
-            tr.TextRender(1280, 580, 25, "CLOSE", 0.9f);
-            tr.TextRender(100, 1100, 25, "SCORE:" + gameState.Scores.ToString(), 0.9f);
+            GL.Color4(Color4.White);
+            
+            tr.Render();
+            //tr.TextRender(1280, 580, 25, "CLOSE", 0.9f);
+            //tr.TextRender(100, 1100, 25, "SCORE:" + gameState.Scores.ToString(), 0.9f);
             if(pause) { tr.TextRender(900, 950, 37, "pause", 3f); }
             if(gameState.GameOver)
             {
