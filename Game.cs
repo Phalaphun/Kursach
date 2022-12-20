@@ -90,7 +90,6 @@ namespace Kursach
                 GL.Color4(Color4.White);
                 tr3.RenderText();
             }
-            
             SwapBuffers();
         }
         protected override void OnUpdateFrame(FrameEventArgs args)
