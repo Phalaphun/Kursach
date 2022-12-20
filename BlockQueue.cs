@@ -90,11 +90,11 @@
         }
         public Block GetAndUpdate()
         {
-            Block block = NextBlock;
+            Block block = NextBlock; // Создаём блок и его и вернём
             do
             {
-                NextBlock = RandomBlock();
-            } while (block.Id == NextBlock.Id);
+                NextBlock = RandomBlock(); // создаём уже следующий блой и записываем его в свойство. Для показа следующего блока (если хватит лимита кода)
+            } while (block.Id == NextBlock.Id); // Чтобы одинаковые подряд блоки не генерились 
             return block;
         }
     }

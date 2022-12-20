@@ -9,10 +9,12 @@ using System.Text;
 using System.Threading.Tasks;
 namespace Kursach
 {
-    internal class Button : VisualFigure
+    delegate void MouseDelegate(MouseButtonEventArgs e);
+    internal class Button //: VisualFigure
     {
         float x, y, width, height;
         Color4 color;
+        public MouseDelegate OnMouseDown;
         public Button(float x, float y, float width, float height, Color4 color)
         {
             this.x = x;
@@ -21,7 +23,7 @@ namespace Kursach
             this.height = height;
             this.color = color;
         }
-        public override void Draw()
+        public void Draw()
         {
             GL.Color4(color);
             GL.Begin(PrimitiveType.Quads);
@@ -31,7 +33,7 @@ namespace Kursach
             GL.Vertex2(x + width, y);
             GL.End();
         }
-        public override bool IsPointInFigure(float pointX, float pointY)
+        public bool IsPointInFigure(float pointX, float pointY)
         {
             if (pointX < x) return false;
             if (pointY < y) return false;
@@ -39,7 +41,7 @@ namespace Kursach
             if (pointY > y + height) return false;
             return true;
         }
-        public override bool IsPointInFigure(Vector2 point)
+        public bool IsPointInFigure(Vector2 point)
         {
             return IsPointInFigure(point.X, point.Y);
         }

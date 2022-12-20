@@ -5,7 +5,7 @@ namespace Kursach
     internal class GameStatus
     {
         private Block currentBlock;
-        private int width;
+        private int width, height;
         public Block CurrentBlock
         {
             get { return currentBlock; }
@@ -23,6 +23,7 @@ namespace Kursach
         {
             CircleCell = new CircleCells(height, width, centerPoint, r, dr);
             this.width = width;
+            this.height = height;
             BQ = new BlockQueue();
             CurrentBlock = BQ.GetAndUpdate();
             Block.Width = width;
@@ -95,9 +96,19 @@ namespace Kursach
                     {
                         for (int j = -1; j <= 1; j++)
                         {
-                            if (CircleCell.Insider(p.Row + i, p.Column + j))
+                            //if (CircleCell.Insider(p.Row + i, p.Column + j))
+                            if (p.Row+i>=0 && p.Row+i< height)
                             {
-                                CircleCell[p.Row + i, p.Column + j] = 0;
+                                if (p.Column + j >= width)
+                                {
+                                    CircleCell[p.Row + i, p.Column + j - width] = 0;
+                                }
+                                else if (p.Column + j < 0)
+                                {
+                                    CircleCell[p.Row + i, p.Column + j + width] = 0;
+                                }
+                                else
+                                    CircleCell[p.Row + i, p.Column + j] = 0;
                             }
                         }
                     }

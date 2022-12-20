@@ -17,7 +17,8 @@ namespace Kursach
         Vector2 cursorPosition, centerPoint;
         Button restart = new Button(1200, 800, 300, 200, Color4.Gray);
         Button close = new Button(1200, 500, 300, 200, Color4.Gray);
-        List<VisualFigure> figures = new List<VisualFigure>();
+        List<Button> buttons = new List<Button>();
+        TextRenderer tr;
         private Vector3[] ColorMass = new Vector3[]
         {
             new Vector3(0,0,0), //black
@@ -30,7 +31,7 @@ namespace Kursach
             new Vector3(255/255f,0,0),//red
             new Vector3(1,1,1),//white
         };
-        TextRenderer tr;
+        
         public Game(GameWindowSettings gSettings, NativeWindowSettings nSettings) : base(gSettings, nSettings)
         {
 
@@ -52,13 +53,15 @@ namespace Kursach
             gameState = new GameStatus(height, width, centerPoint, r, dr);
             textureId = ContentPipe.LoadTexture(@"Content\Consolas_Alpha_W.png");
             tr = new TextRenderer(16, 16, textureId, (float)ortoWidth, (float)ortoHeight);
-            figures.Add(restart);
-            figures.Add(close);
+            buttons.Add(restart);
+            buttons.Add(close);
             close.OnMouseDown += CloseEvent;
             restart.OnMouseDown += Restart;
         }
         protected override void OnUnload()
         {
+            gameState.CircleCell.Dispose();
+            tr.Dispose();
             base.OnUnload();
         }
         protected override void OnRenderFrame(FrameEventArgs args)
@@ -72,8 +75,8 @@ namespace Kursach
                 GL.Vertex2(centerPoint);
                 GL.End();
             DrawAll(gameState);
-            foreach (VisualFigure figure in figures)
-                figure.Draw();
+            foreach (Button butt in buttons)
+                butt.Draw();
             GL.Color4(Color4.BlueViolet);
             GL.PointSize(10f);
             GL.Begin(PrimitiveType.Points);
@@ -149,10 +152,10 @@ namespace Kursach
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             base.OnMouseDown(e);
-            for (int i = 0; i < figures.Count; i++)
+            for (int i = 0; i < buttons.Count; i++)
             {
-                if (figures[i].IsPointInFigure(cursorPosition))
-                    figures[i].OnMouseDown?.Invoke(e);
+                if (buttons[i].IsPointInFigure(cursorPosition))
+                    buttons[i].OnMouseDown?.Invoke(e);
             }
         }
         protected override void OnMouseMove(MouseMoveEventArgs e)
@@ -160,29 +163,14 @@ namespace Kursach
             base.OnMouseMove(e);
             cursorPosition = new Vector2((float)(e.Position.X/fiX), (float)ortoHeight - (float)(e.Position.Y/fiY));
         }
-        private void DrawCircleCells(GameStatus gameState) // а на кой я сюда вообще параметр передаю если могу брать глобальный?
-        {
-            for (int i = 0; i < height; i++)
-            {
-                for (int j = 0; j < width; j++)
-                {
-                    GL.Color3(ColorMass[gameState.CircleCell[i, j]]);
-                    gameState.CircleCell.Cells[i][j].Draw();
-                }
-            }
-        }
-        private void DrawActiveBlock(Block block)
-        {
-            foreach (Position p in block.TilePositions())
-            {
-                GL.Color3(ColorMass[block.Id]);
-                gameState.CircleCell.Cells[p.Row][p.Column].Draw();
-            }
-        }
         private void DrawAll(GameStatus gameState)
         {
-            DrawCircleCells(gameState);
-            DrawActiveBlock(gameState.CurrentBlock);
+            gameState.CircleCell.Draw(ColorMass);
+            foreach (Position p in gameState.CurrentBlock.TilePositions())
+            {
+                GL.Color3(ColorMass[gameState.CurrentBlock.Id]); // рисует всю сетку без текущего блока
+                gameState.CircleCell.Cells[p.Row][p.Column].Draw(); // рисует текущий блок
+            }
         }
         private void Restart(MouseButtonEventArgs e)
         {

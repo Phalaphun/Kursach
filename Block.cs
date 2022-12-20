@@ -10,6 +10,7 @@
         private int rotationState;
         private Position offset;
         static internal int Width { get; set; }
+        static internal int Height { get; set; }
         public Block()
         {
             Offset = new Position(StartOffset.Row, StartOffset.Column);
@@ -37,7 +38,7 @@
             foreach(Position p in Tiles[rotationState])
             {
                 //yield return new Position(p.Row + Offset.Row, p.Column + Offset.Column);
-                if(p.Column + Offset.Column >= 12)
+                if(p.Column + Offset.Column >= Width)
                 {
                     
                     yield return new Position(p.Row + Offset.Row, p.Column + Offset.Column - Width);

@@ -2,7 +2,7 @@
 using OpenTK.Mathematics;
 namespace Kursach
 {
-    internal class CircleCells
+    internal class CircleCells : IDisposable
     {
         private Cell[][] cells;
         internal Cell[][] Cells { get => cells; set => cells = value; }
@@ -23,8 +23,6 @@ namespace Kursach
             this.rows = height;
             this.columns = width;
         }
-
-
         private int rows, columns;
         public int Cleared { get; set; }
         public int Rows { get { return rows; } }
@@ -129,11 +127,33 @@ namespace Kursach
             }
             return temp;
         }
+        public void Draw(Vector3[] ColorMass)
+        {
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < columns; j++)
+                {
+                    GL.Color3(ColorMass[cells[i][j].Id]);
+                    cells[i][j].Draw();
+                }
+            }
+        }
+        public void Dispose()
+        {
+            for (int i = 0; i < rows; i++)
+            {
+                for(int j =0; j<columns; j++)
+                {
+                    Cells[i][j].Dispose();
+                }
+            }
+            GC.Collect();
+        }
     }
-    internal class Cell
+    internal class Cell : IDisposable
     {
         float x2, y2, x3, y3, x4, y4, x5, y5;
-        int id;
+        int id, bufferId; float[] temp;
         public int Id { get { return id; } set { id = value; } }
         public Cell(Vector2 Center, int j, int i, int r, int dr, int width)
         {
@@ -149,22 +169,43 @@ namespace Kursach
 
             x5 = Center.X + (r + i * dr) * (float)Math.Cos((j + 1) * dAlpha);
             y5 = Center.Y + (r + i * dr) * (float)Math.Sin((j + 1) * dAlpha);
+
+            temp = new float[] {x2,y2,x3,y3,x4,y4,x5,y5 };
+            bufferId = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, bufferId);
+            GL.BufferData(BufferTarget.ArrayBuffer, temp.Length*sizeof(float),temp,BufferUsageHint.StaticDraw);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
         public void Draw()
         {
-            GL.Begin(PrimitiveType.Polygon);
-            GL.Vertex2(x2, y2);
-            GL.Vertex2(x3, y3);
-            GL.Vertex2(x4, y4);
-            GL.Vertex2(x5, y5);
-            GL.End();
+            
+            GL.EnableClientState(ArrayCap.VertexArray);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, bufferId);
+            GL.VertexPointer(2, VertexPointerType.Float, 0, 0);
+            GL.DrawArrays(PrimitiveType.Polygon, 0, 4);
             GL.Color4(Color4.Red);
-            GL.Begin(PrimitiveType.LineLoop);
-            GL.Vertex2(x2, y2);
-            GL.Vertex2(x3, y3);
-            GL.Vertex2(x4, y4);
-            GL.Vertex2(x5, y5);
-            GL.End();
+            GL.DrawArrays(PrimitiveType.LineLoop, 0, 4);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.DisableClientState(ArrayCap.VertexArray);
+
+            //GL.Begin(PrimitiveType.Polygon);
+            //GL.Vertex2(x2, y2);
+            //GL.Vertex2(x3, y3);
+            //GL.Vertex2(x4, y4);
+            //GL.Vertex2(x5, y5);
+            //GL.End();
+            //GL.Color4(Color4.Red);
+            //GL.Begin(PrimitiveType.LineLoop);
+            //GL.Vertex2(x2, y2);
+            //GL.Vertex2(x3, y3);
+            //GL.Vertex2(x4, y4);
+            //GL.Vertex2(x5, y5);
+            //GL.End();
+        }
+
+        public void Dispose()
+        {
+            GL.DeleteBuffer(bufferId);
         }
     }
 }

@@ -3,7 +3,7 @@ using OpenTK.Mathematics;
 using System.Text;
 namespace Kursach
 {
-    internal class TextRenderer
+    internal class TextRenderer : IDisposable
     {
         int choosenColumn, choosenRow, rows, columns, textureId;
         float frameWidth, frameHeight, xx = 0.1f, yy = 0.1f;
@@ -63,6 +63,11 @@ namespace Kursach
             //GL.Vertex2(x + (0.1f * scale), y + (0.1f * scale));
             //GL.Vertex2(x + (0.1f * scale), y);
             //GL.End();
+        }
+
+        public void Dispose()
+        {
+            GL.DeleteBuffer(textureId);
         }
     }
 }
