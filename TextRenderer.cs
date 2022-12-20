@@ -1,7 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
 using System.Text;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Kursach
 {
@@ -10,8 +8,7 @@ namespace Kursach
         int choosenColumn, choosenRow, rows, columns, textureId;
         float frameWidth, frameHeight, xx = 0.1f, yy = 0.1f;
         List<int> vaoVboindex = new List<int>() { };
-        public TextRenderer(int rows, int columns, int textureId, float canvaWidth, float canvaHeight)
-        {
+        public TextRenderer(int rows, int columns, int textureId, float canvaWidth, float canvaHeight){ 
             this.rows = rows;
             this.columns = columns;
             frameHeight = 1.0f / rows;
@@ -20,30 +17,16 @@ namespace Kursach
             xx *= canvaWidth / 4;
             yy *= canvaHeight / 4;
         }
-        public TextRenderer(int rows, int columns, int textureId)
-        {
-            this.rows = rows;
-            this.columns = columns;
-            frameHeight = 1.0f / rows;
-            frameWidth = 1.0f / columns;
-            this.textureId = textureId;
-        }
-        public void PrepareText(float x, float y, float dx, string text, float scale = 1)
-        {
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            Encoding encoding = Encoding.GetEncoding("windows-1251");
-            byte[] asciiCodes = encoding.GetBytes(text);
-            
-            for (int i = 0; i < text.Length; i++)
-            {
+        public void PrepareText(float x, float y, float dx, string text, float scale = 1) {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); // Получаю доступ к доп кодировкам
+            Encoding encoding = Encoding.GetEncoding("windows-1251"); // Устанавливаю кодировку
+            byte[] asciiCodes = encoding.GetBytes(text); 
+            for (int i = 0; i < text.Length; i++){
                 LetterRender(x + i * dx, y, asciiCodes[i], out int a, out int b, out int vao, scale);
                 vaoVboindex.Add(vao); vaoVboindex.Add(b); vaoVboindex.Add(a);
             }
-            
-           
         }
-        private void LetterRender(float x, float y, byte target,  out int a, out int b, out int vao, float scale = 1)
-        {
+        private void LetterRender(float x, float y, byte target,  out int a, out int b, out int vao, float scale = 1){
             choosenColumn = target % rows;
             choosenRow = target / columns;
             float[] texCords = { 0.0f + frameWidth * (choosenColumn) , 0.0f + frameHeight * (choosenRow + 1),
@@ -68,7 +51,7 @@ namespace Kursach
             GL.EnableClientState(ArrayCap.TextureCoordArray);
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, b);
-            GL.TexCoordPointer(2, TexCoordPointerType.Float, 0, 0);
+            GL.TexCoordPointer(2, TexCoordPointerType.Float,0, 0); // первы нуль начальное положение, второй отвечает через сколько элементов лежат следующие нужные
             GL.BindBuffer(BufferTarget.ArrayBuffer, a);
             GL.VertexPointer(2, VertexPointerType.Float, 0, 0);
 
@@ -77,28 +60,23 @@ namespace Kursach
 
             GL.DisableClientState(ArrayCap.VertexArray);
             GL.DisableClientState(ArrayCap.TextureCoordArray);
+            
         }
-
-        public void RenderText()
-        {
+        public void RenderText(){
             GL.Enable(EnableCap.Texture2D);
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-            GL.Enable(EnableCap.Blend);
-
+            GL.Enable(EnableCap.Blend);// Подключаем режим отображения текстур
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha); //описывает как складываются пиксели источника и того, кто уже в кадре. В моём случае для прозрачности нужно.
+            
             for (int i = 0; i < vaoVboindex.Count; i += 3)
             {
                 GL.BindVertexArray(vaoVboindex[i]);
                 GL.DrawArrays(PrimitiveType.Quads, 0, 4);
                 GL.BindVertexArray(0);
             }
-            //GL.BindVertexArray(0);
-            
-
             GL.Disable(EnableCap.Texture2D);
             GL.Disable(EnableCap.Blend);
         }
-        public void Dispose()
-        {
+        public void Dispose(){
             GL.DeleteTexture(textureId);
             for (int i = 0; i < vaoVboindex.Count; i += 3)
             {
@@ -107,10 +85,8 @@ namespace Kursach
                 GL.DeleteBuffer(vaoVboindex[i + 1]);
                 GL.DeleteBuffer(vaoVboindex[i + 2]);
             }
-
         }
-        public void Update(float x, float y, float dx, string text, float scale = 1)
-        {
+        public void Update(float x, float y, float dx, string text, float scale = 1){
             for (int i = 0; i < vaoVboindex.Count; i+=3)
             {
                 GL.BindVertexArray(0);
@@ -121,6 +97,5 @@ namespace Kursach
             vaoVboindex.Clear();
             PrepareText(x, y, dx, text, scale = 1);
         }
-
     }
 }

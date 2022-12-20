@@ -37,7 +37,6 @@
         {   
             foreach(Position p in Tiles[rotationState])
             {
-                //yield return new Position(p.Row + Offset.Row, p.Column + Offset.Column);
                 if(p.Column + Offset.Column >= Width)
                 {
                     
@@ -62,13 +61,9 @@
         public void RotateCCW() 
         {
             if(rotationState == 0)
-            {
                 rotationState = Tiles.Length - 1;
-            }
             else
-            {
                 rotationState--;
-            }
         }
     }
 }

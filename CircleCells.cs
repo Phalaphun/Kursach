@@ -1,13 +1,10 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-namespace Kursach
-{
-    internal class CircleCells : IDisposable
-    {
+namespace Kursach{
+    internal class CircleCells : IDisposable{
         private Cell[][] cells;
         internal Cell[][] Cells { get => cells; set => cells = value; }
-        public CircleCells(int height, int width, Vector2 Center, int r, int dr)
-        {
+        public CircleCells(int height, int width, Vector2 Center, int r, int dr){
             Cells = new Cell[height][];
             for (int i = height - 1; i >= 0; i--)
             {
@@ -27,58 +24,33 @@ namespace Kursach
         public int Cleared { get; set; }
         public int Rows { get { return rows; } }
         public int Columns { get { return columns; } }
-        public int this[int r, int c]
-        {
-            get
-            {
-                return this.cells[r][c].Id;
-            }
-            set
-            {
-                this.cells[r][c].Id = value;
-            }
-        }
-        public bool Insider(int r, int c)
-        {
+        public int this[int r, int c] { get => this.cells[r][c].Id; set => this.cells[r][c].Id = value; }
+        public bool Insider(int r, int c){
             return (r >= 0 && r < Rows) && (c >= 0 && c < Columns);
         }
-        public bool Empty(int r, int c)
-        {
+        public bool Empty(int r, int c){
             return Insider(r, c) && cells[r][c].Id == 0;
         }
-        public bool RowFullChecker(int r)
-        {
+        public bool RowFullChecker(int r){
             for (int c = 0; c < Columns; c++)
-            {
                 if (cells[r][c].Id == 0)
                     return false;
-            }
             return true;
         }
-        public bool RowEmptyChecker(int r)
-        {
+        public bool RowEmptyChecker(int r){
             for (int c = 0; c < Columns; c++)
-            {
                 if (cells[r][c].Id != 0)
                     return false;
-            }
             return true;
         }
-        private void ClearRow(int r)
-        {
+        private void ClearRow(int r){
             for (int c = 0; c < Columns; c++)
-            {
                 cells[r][c].Id = 0;
-            }
         }
-        private void MoveRowDown(int r, int numRows)
-        {
-            for (int c = 0; c < Columns; c++)
-            {
+        private void MoveRowDown(int r, int numRows){
+            for (int c = 0; c < Columns; c++){
                 if (r == Rows - 1)
-                {
                     cells[r][c].Id = 0;
-                }
                 else
                 {
                     cells[r + numRows][c].Id = cells[r][c].Id;
@@ -86,9 +58,7 @@ namespace Kursach
                 }
             }
         }
-
-        public int ClearRow()
-        {
+        public int ClearRow(){
             int cleared = 0; //нужна чтобы определить на сколько потом сдвинуть все строчки вниз
             for (int r = Rows - 1; r > 0; r--) // идём сверху вниз см.MoveRowDown 
             {
@@ -98,56 +68,45 @@ namespace Kursach
                     cleared++;
                 }
                 if (cleared > 0)
-                {
                     MoveRowDown(r - 1, cleared);
-                }
             }
             return cleared;
         }
-        public int ClearAllRowsFull()
-        {
-
+        public int ClearAllRowsFull(){
+            int temp = 0;
             while (RowFullCheckerAll())
+                temp += ClearRow();
+            if (temp >= 4)
             {
-                Cleared += ClearRow();
+                Cleared = 2 * temp + Cleared;
+                return Cleared;
             }
-            if(Cleared >= 4) { return 2*Cleared; }
+            else
+                Cleared += temp;
             return Cleared;
         }
-        private bool RowFullCheckerAll()
-        {
+        private bool RowFullCheckerAll(){
             bool temp = false;
-            for (int r = Rows - 1; r > 0; r--)
-            {
+            for (int r = Rows - 1; r > 0; r--){
                 temp = RowFullChecker(r);
                 if (temp)
-                {
                     break;
-                }
             }
             return temp;
         }
-        public void Draw(Vector3[] ColorMass)
-        {
-            for (int i = 0; i < rows; i++)
-            {
-                for (int j = 0; j < columns; j++)
-                {
+        public void Draw(Vector3[] ColorMass){
+            for (int i = 0; i < rows; i++){
+                for (int j = 0; j < columns; j++){
                     GL.Color3(ColorMass[cells[i][j].Id]);
                     cells[i][j].Draw();
                 }
             }
         }
-        public void Dispose()
-        {
-            for (int i = 0; i < rows; i++)
-            {
-                for(int j =0; j<columns; j++)
-                {
+        public void Dispose(){
+            for (int i = 0; i < rows; i++){
+                for (int j = 0; j < columns; j++)
                     Cells[i][j].Dispose();
-                }
             }
-            GC.Collect();
         }
     }
     internal class Cell : IDisposable
@@ -155,10 +114,9 @@ namespace Kursach
         float x2, y2, x3, y3, x4, y4, x5, y5;
         int id, bufferId; float[] temp;
         public int Id { get { return id; } set { id = value; } }
-        public Cell(Vector2 Center, int j, int i, int r, int dr, int width)
-        {
+        public Cell(Vector2 Center, int j, int i, int r, int dr, int width){
             float dAlpha = 2 * (float)Math.PI / width;
-            x2 = Center.X + (r + i * dr) * (float)Math.Cos(j * dAlpha); // r - внутренний радиус, к-внешний(хотя скорее это ∆r, иначе говоря шаг), i- номер круга, j- число блоков в круге
+            x2 = Center.X + (r + i * dr) * (float)Math.Cos(j * dAlpha); // r - внутренний радиус, dr-внешний(хотя скорее это ∆r, иначе говоря шаг), i- номер круга, j- число блоков в круге
             y2 = Center.Y + (r + i * dr) * (float)Math.Sin(j * dAlpha);
 
             x3 = Center.X + (r + i * dr + dr) * (float)Math.Cos(j * dAlpha);
@@ -170,15 +128,13 @@ namespace Kursach
             x5 = Center.X + (r + i * dr) * (float)Math.Cos((j + 1) * dAlpha);
             y5 = Center.Y + (r + i * dr) * (float)Math.Sin((j + 1) * dAlpha);
 
-            temp = new float[] {x2,y2,x3,y3,x4,y4,x5,y5 };
+            temp = new float[] { x2, y2, x3, y3, x4, y4, x5, y5 };
             bufferId = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, bufferId);
-            GL.BufferData(BufferTarget.ArrayBuffer, temp.Length*sizeof(float),temp,BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, temp.Length * sizeof(float), temp, BufferUsageHint.StaticDraw);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
-        public void Draw()
-        {
-            
+        public void Draw(){
             GL.EnableClientState(ArrayCap.VertexArray);
             GL.BindBuffer(BufferTarget.ArrayBuffer, bufferId);
             GL.VertexPointer(2, VertexPointerType.Float, 0, 0);
@@ -187,24 +143,8 @@ namespace Kursach
             GL.DrawArrays(PrimitiveType.LineLoop, 0, 4);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.DisableClientState(ArrayCap.VertexArray);
-
-            //GL.Begin(PrimitiveType.Polygon);
-            //GL.Vertex2(x2, y2);
-            //GL.Vertex2(x3, y3);
-            //GL.Vertex2(x4, y4);
-            //GL.Vertex2(x5, y5);
-            //GL.End();
-            //GL.Color4(Color4.Red);
-            //GL.Begin(PrimitiveType.LineLoop);
-            //GL.Vertex2(x2, y2);
-            //GL.Vertex2(x3, y3);
-            //GL.Vertex2(x4, y4);
-            //GL.Vertex2(x5, y5);
-            //GL.End();
         }
-
-        public void Dispose()
-        {
+        public void Dispose(){
             GL.DeleteBuffer(bufferId);
         }
     }

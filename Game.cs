@@ -3,9 +3,6 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework; //795
-using System.Diagnostics;
-using System.Xml;
-
 namespace Kursach
 {
     internal class Game : GameWindow
@@ -15,11 +12,10 @@ namespace Kursach
         bool pause=false;
         GameStatus gameState;
         Vector2 cursorPosition, centerPoint;
-        Button restart = new Button(1200, 800, 300, 200, Color4.Gray), close = new Button(1200, 500, 300, 200, Color4.Gray);
+        Button restart, close;
         List<Button> buttons = new List<Button>() {};
         TextRenderer tr1,tr2,tr3,tr4;
-        private Vector3[] ColorMass = new Vector3[]
-        {
+        private Vector3[] ColorMass = new Vector3[]{
             new Vector3(0,0,0), //black
             new Vector3(0,255/255f,255/255f), //cyan
             new Vector3(0f,0f,255/255f), //blue
@@ -31,12 +27,10 @@ namespace Kursach
             new Vector3(1,1,1),//white
         };
         
-        public Game(GameWindowSettings gSettings, NativeWindowSettings nSettings) : base(gSettings, nSettings)
-        {
-
+        public Game(GameWindowSettings gSettings, NativeWindowSettings nSettings) : base(gSettings, nSettings){
+            VSync = VSyncMode.On;
         }
-        protected override void OnLoad()
-        {
+        protected override void OnLoad(){
             base.OnLoad();
             width = 12;  
             height = 22; 
@@ -45,16 +39,17 @@ namespace Kursach
             r = 60;
             dr = 20;
             centerPoint = new Vector2(510, 510);
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadIdentity();
-            GL.Ortho(0, ortoWidth, 0, ortoHeight, -1, 1); // 0;0 находится в левом нижнем углу. У направлена вверх, х - направо
-            GL.MatrixMode(MatrixMode.Modelview);
+            GL.MatrixMode(MatrixMode.Projection); //Как я понял тут выбирается локальная матрица над которой сейчас будет работа происходить.
+            GL.LoadIdentity(); // Загружаем матрицу по умолчанию. Вроде бы единичная матрица
+            GL.Ortho(0, ortoWidth, 0, ortoHeight, -1, 1); // 0;0 находится в левом нижнем углу. У направлена вверх, х - направо. Перемножаю матрицу на новую.
+            GL.MatrixMode(MatrixMode.Modelview); // Выбираю снова глобальную матрицу 
             gameState = new GameStatus(height, width, centerPoint, r, dr);
             textureId = ContentPipe.LoadTexture(@"Content\Consolas_Alpha_W.png");
             tr1 = new TextRenderer(16, 16, textureId, (float)ortoWidth, (float)ortoHeight);
             tr2 = new TextRenderer(16, 16, textureId, (float)ortoWidth, (float)ortoHeight);
             tr3 = new TextRenderer(16, 16, textureId, (float)ortoWidth, (float)ortoHeight);
             tr4 = new TextRenderer(16, 16, textureId, (float)ortoWidth, (float)ortoHeight);
+            restart = new Button(1200, 800, 300, 200, Color4.Gray); close = new Button(1200, 500, 300, 200, Color4.Gray);
             buttons.Add(restart);
             buttons.Add(close);
             close.OnMouseDown += CloseEvent;
@@ -65,17 +60,15 @@ namespace Kursach
             tr2.PrepareText(900, 950, 37, "paused", 3f);
             tr3.PrepareText(640, 530, 25, "GAME OVER", 0.9f);
         }
-        protected override void OnUnload()
-        {
+        protected override void OnUnload(){
             gameState.CircleCell.Dispose();
             tr1.Dispose(); tr2.Dispose(); tr3.Dispose(); tr4.Dispose();
             base.OnUnload();
         }
-        protected override void OnRenderFrame(FrameEventArgs args)
-        {
+        protected override void OnRenderFrame(FrameEventArgs args){
             base.OnRenderFrame(args);
-            GL.ClearColor(Color4.Black);
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.ClearColor(Color4.Black); //устанавливаем цвет для очистки
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit); //Производим очистку указанных буферов цвета
             DrawAll(gameState);
             if (pause) { GL.Color4(Color4.White); tr2.RenderText(); }
             if(gameState.GameOver)
@@ -92,8 +85,7 @@ namespace Kursach
             }
             SwapBuffers();
         }
-        protected override void OnUpdateFrame(FrameEventArgs args)
-        {
+        protected override void OnUpdateFrame(FrameEventArgs args){
             if (!pause)
             {
                 if (!gameState.GameOver)
@@ -105,7 +97,7 @@ namespace Kursach
                         while (lag > TIME_PER_FRAME)
                         {
                             if (previouseScores < gameState.Scores && TIME_PER_FRAME - 0.03 > 0.03)
-                                    TIME_PER_FRAME -= 0.03;
+                                TIME_PER_FRAME -= 0.03;
                             previouseScores = gameState.Scores;
                             lag -= TIME_PER_FRAME;
                             gameState.MoveBlockDown();
@@ -115,17 +107,14 @@ namespace Kursach
 
                 } 
             }
-            base.OnUpdateFrame(args);
+            base.OnUpdateFrame(args);   
         }
-        protected override void OnResize(ResizeEventArgs e)
-        {
-            fiX = e.Width / ortoWidth;
-            fiY = e.Height / ortoHeight;
+        protected override void OnResize(ResizeEventArgs e){
+            fiX = e.Width / ortoWidth; fiY = e.Height / ortoHeight;
             base.OnResize(e);
-            GL.Viewport(0, 0, e.Width, e.Height);
+            GL.Viewport(0, 0, e.Width, e.Height); //Указывают нижний левый угол прямоугольника видового экрана, в пикселях. ширина, высота Указывают ширину и высоту области просмотра. Задает преобразование x и y из нормализованных координат устройства в координаты окна
         }
-        protected override void OnKeyDown(KeyboardKeyEventArgs e)
-        {
+        protected override void OnKeyDown(KeyboardKeyEventArgs e){
             base.OnKeyDown(e);
             if (gameState.GameOver)
                 return;
@@ -141,22 +130,17 @@ namespace Kursach
                 }
             }
         }
-        protected override void OnMouseDown(MouseButtonEventArgs e)
-        {
+        protected override void OnMouseDown(MouseButtonEventArgs e){
             base.OnMouseDown(e);
             for (int i = 0; i < buttons.Count; i++)
-            {
                 if (buttons[i].IsPointInFigure(cursorPosition))
-                    buttons[i].OnMouseDown?.Invoke(e);
-            }
+                    buttons[i].OnMouseDown?.Invoke();
         }
-        protected override void OnMouseMove(MouseMoveEventArgs e)
-        {
+        protected override void OnMouseMove(MouseMoveEventArgs e){
             base.OnMouseMove(e);
             cursorPosition = new Vector2((float)(e.Position.X/fiX), (float)ortoHeight - (float)(e.Position.Y/fiY));
         }
-        private void DrawAll(GameStatus gameState)
-        {
+        private void DrawAll(GameStatus gameState){
             gameState.CircleCell.Draw(ColorMass);
             foreach (Position p in gameState.CurrentBlock.TilePositions())
             {
@@ -171,12 +155,12 @@ namespace Kursach
             if (previouseScores < gameState.Scores)
                 tr4.Update(100, 1100, 25, "SCORE:" + gameState.Scores.ToString(), 0.9f);
         }
-        private void Restart(MouseButtonEventArgs e)
-        {
+        private void Restart(){
             gameState = new GameStatus(height, width, centerPoint, r, dr);
+            tr4.Update(100, 1100, 25, "SCORE:" + gameState.Scores.ToString(), 0.9f);
+            GC.Collect();
         }
-        private void CloseEvent(MouseButtonEventArgs e)
-        {
+        private void CloseEvent(){
             this.Close();
         }
     }
