@@ -55,6 +55,7 @@ namespace Kursach
                 GL.Vertex2(x + (xx * scale), y);
             GL.End();
             GL.Disable(EnableCap.Texture2D);
+            GL.Disable(EnableCap.Blend);
             //GL.Color4(Color4.Red);
             //GL.PointSize(2f);
             //GL.Begin(PrimitiveType.LineLoop);
@@ -63,6 +64,8 @@ namespace Kursach
             //GL.Vertex2(x + (0.1f * scale), y + (0.1f * scale));
             //GL.Vertex2(x + (0.1f * scale), y);
             //GL.End();
+
+
         }
 
         public void Dispose()

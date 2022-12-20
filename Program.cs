@@ -15,7 +15,7 @@ namespace Kursach
             NativeWindowSettings nSettings = new NativeWindowSettings()
             {
                 Title = "Game",
-                Size = (700, 500),
+                Size = (1280, 1024),
                 Flags = ContextFlags.Default,
                 Profile = ContextProfile.Compatability
             };

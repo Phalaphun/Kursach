@@ -10,14 +10,13 @@ namespace Kursach
     internal class Game : GameWindow
     {
         int width, height, previouseScores, r, dr, textureId;
-        double fiX, fiY, ortoWidth,ortoHeight;
-        double lag = 0, TIME_PER_FRAME = 0.45;
+        double fiX, fiY, ortoWidth,ortoHeight, lag = 0, TIME_PER_FRAME = 0.45;
         bool pause=false;
         GameStatus gameState;
         Vector2 cursorPosition, centerPoint;
         Button restart = new Button(1200, 800, 300, 200, Color4.Gray);
         Button close = new Button(1200, 500, 300, 200, Color4.Gray);
-        List<Button> buttons = new List<Button>();
+        List<Button> buttons = new List<Button>() { };
         TextRenderer tr;
         private Vector3[] ColorMass = new Vector3[]
         {
