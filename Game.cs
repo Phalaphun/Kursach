@@ -88,7 +88,7 @@ namespace Kursach
         protected override void OnUpdateFrame(FrameEventArgs args){
             if (!pause)
             {
-                if (!gameState.GameOver)
+                if (!gameState.GameOver) // С момента окончания прошлого игрового цикла у нас прошло некоторое время. Именно столько времени нам нужно просимулировать в игре, чтобы отобразить текущее состояние игроку. Сделано это с помощью серии фиксированных временных шагов
                 {
                     lag += args.Time;
                     
