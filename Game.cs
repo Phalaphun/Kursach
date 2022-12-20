@@ -3,6 +3,8 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework; //795
+using System.Diagnostics;
+
 namespace Kursach
 {
     internal class Game : GameWindow
@@ -99,9 +101,9 @@ namespace Kursach
                             if (previouseScores < gameState.Scores && TIME_PER_FRAME - 0.03 > 0.03)
                                 TIME_PER_FRAME -= 0.03;
                             previouseScores = gameState.Scores;
-                            lag -= TIME_PER_FRAME;
+                            lag -= TIME_PER_FRAME; Debug.WriteLine("TIME_PER_FRAME: "+TIME_PER_FRAME);
                             gameState.MoveBlockDown();
-                            this.Title = "Tetris        Scores: " + gameState.Scores.ToString();
+                            this.Title = "Pautinka        Scores: " + gameState.Scores.ToString();
                         }
                     }
 

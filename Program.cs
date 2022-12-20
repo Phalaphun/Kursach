@@ -9,7 +9,7 @@ namespace Kursach{
         static void StartGame(){
 
             GameWindowSettings gSettings = GameWindowSettings.Default; // Устанавливаются начальные настройки. Там частота рендера апдейта и многопоточность.
-            NativeWindowSettings nSettings = new NativeWindowSettings(){ // устанавливаются другие настройки. Которые касаются уже непосредственно окна
+            NativeWindowSettings nSettings = new NativeWindowSettings(){ // устанавливаются другие настройки. Которые касаются уже непосредственно окна-движка
                 Title = "Game",
                 Size = (1280, 1024),
                 Flags = ContextFlags.Default,
