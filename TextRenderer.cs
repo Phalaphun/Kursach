@@ -28,7 +28,7 @@ namespace Kursach
             frameWidth = 1.0f / columns;
             this.textureId = textureId;
         }
-        public void TextRender(float x, float y, float dx, string text, float scale = 1)
+        public void PrepareText(float x, float y, float dx, string text, float scale = 1)
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             Encoding encoding = Encoding.GetEncoding("windows-1251");
@@ -46,33 +46,6 @@ namespace Kursach
         {
             choosenColumn = target % rows;
             choosenRow = target / columns;
-            //GL.Enable(EnableCap.Texture2D);
-            //GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-            //GL.Enable(EnableCap.Blend);
-            //GL.BindTexture(TextureTarget.Texture2D, textureId);
-            //GL.Color4(Color4.White);
-            //GL.Begin(PrimitiveType.Quads);
-            //    GL.TexCoord2(0.0f + frameWidth * (choosenColumn), 0.0f + frameHeight * (choosenRow + 1));
-            //    GL.Vertex2(x, y);
-            //    GL.TexCoord2(0.0f + frameWidth * (choosenColumn), 0.0f + frameHeight * (choosenRow));
-            //    GL.Vertex2(x, y + (yy * scale));
-            //    GL.TexCoord2(0.0f + frameWidth * (choosenColumn + 1), 0.0f + frameHeight * (choosenRow));
-            //    GL.Vertex2(x + (xx * scale), y + (yy * scale));
-            //    GL.TexCoord2(0.0f + frameWidth * (choosenColumn + 1), 0.0f + frameHeight * (choosenRow + 1));
-            //    GL.Vertex2(x + (xx * scale), y);
-            //GL.End();
-            //GL.Disable(EnableCap.Texture2D);
-            //GL.Disable(EnableCap.Blend);
-
-            //GL.Color4(Color4.Red);
-            //GL.PointSize(2f);
-            //GL.Begin(PrimitiveType.LineLoop);
-            //GL.Vertex2(x, y);
-            //GL.Vertex2(x, y + (0.1f * scale));
-            //GL.Vertex2(x + (0.1f * scale), y + (0.1f * scale));
-            //GL.Vertex2(x + (0.1f * scale), y);
-            //GL.End();
-
             float[] texCords = { 0.0f + frameWidth * (choosenColumn) , 0.0f + frameHeight * (choosenRow + 1),
                              0.0f + frameWidth * (choosenColumn),0.0f + frameHeight * (choosenRow),
                              0.0f + frameWidth * (choosenColumn + 1), 0.0f + frameHeight * (choosenRow),
@@ -104,35 +77,9 @@ namespace Kursach
 
             GL.DisableClientState(ArrayCap.VertexArray);
             GL.DisableClientState(ArrayCap.TextureCoordArray);
-
-            //GL.Enable(EnableCap.Texture2D);
-            //GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-            //GL.Enable(EnableCap.Blend);
-
-
-            //GL.EnableClientState(ArrayCap.VertexArray);
-            //GL.EnableClientState(ArrayCap.TextureCoordArray);
-            //GL.BindTexture(TextureTarget.Texture2D, textureId);
-            //GL.BindBuffer(BufferTarget.ArrayBuffer, b);
-            //GL.TexCoordPointer(2, TexCoordPointerType.Float, 0, 0);
-
-            //GL.BindBuffer(BufferTarget.ArrayBuffer, a);
-            //GL.VertexPointer(2,VertexPointerType.Float,0,0);
-            //GL.DrawArrays(PrimitiveType.Quads, 0, 4);
-            //GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-
-            //GL.BindTexture(TextureTarget.Texture2D, 0);
-            //GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            //GL.DisableClientState(ArrayCap.VertexArray);
-            //GL.DisableClientState(ArrayCap.TextureCoordArray);
-
-            //GL.Disable(EnableCap.Texture2D);
-            //GL.Disable(EnableCap.Blend);
-
-
         }
 
-        public void Render()
+        public void RenderText()
         {
             GL.Enable(EnableCap.Texture2D);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
@@ -142,22 +89,9 @@ namespace Kursach
             {
                 GL.BindVertexArray(vaoVboindex[i]);
                 GL.DrawArrays(PrimitiveType.Quads, 0, 4);
+                GL.BindVertexArray(0);
             }
-            //    GL.BindVertexArray(vaoVboindex[0]);
-            //    GL.DrawArrays(PrimitiveType.Quads, 0, 4);
-            //GL.BindVertexArray(vaoVboindex[3]);
-            //GL.DrawArrays(PrimitiveType.Quads, 0, 4);
-            //GL.BindVertexArray(vaoVboindex[6]);
-            //GL.DrawArrays(PrimitiveType.Quads, 0, 4);
-            //GL.BindVertexArray(vaoVboindex[9]);
-            //GL.DrawArrays(PrimitiveType.Quads, 0, 4);
-            //GL.BindVertexArray(vaoVboindex[12]);
-            //GL.DrawArrays(PrimitiveType.Quads, 0, 4);
-            //GL.BindVertexArray(vaoVboindex[15]);
-            //GL.DrawArrays(PrimitiveType.Quads, 0, 4);
-            //GL.BindVertexArray(vaoVboindex[18]);
-            //GL.DrawArrays(PrimitiveType.Quads, 0, 4);
-            GL.BindVertexArray(0);
+            //GL.BindVertexArray(0);
             
 
             GL.Disable(EnableCap.Texture2D);
@@ -166,10 +100,27 @@ namespace Kursach
         public void Dispose()
         {
             GL.DeleteTexture(textureId);
-            for(int i=0; i<vaoVboindex.Count;i++)
+            for (int i = 0; i < vaoVboindex.Count; i += 3)
             {
-                GL.DeleteBuffer(i);
+                GL.BindVertexArray(0);
+                GL.DeleteVertexArray(vaoVboindex[i]);
+                GL.DeleteBuffer(vaoVboindex[i + 1]);
+                GL.DeleteBuffer(vaoVboindex[i + 2]);
             }
+
         }
+        public void Update(float x, float y, float dx, string text, float scale = 1)
+        {
+            for (int i = 0; i < vaoVboindex.Count; i+=3)
+            {
+                GL.BindVertexArray(0);
+                GL.DeleteVertexArray(vaoVboindex[i]);
+                GL.DeleteBuffer(vaoVboindex[i + 1]);
+                GL.DeleteBuffer(vaoVboindex[i + 2]);
+            }
+            vaoVboindex.Clear();
+            PrepareText(x, y, dx, text, scale = 1);
+        }
+
     }
 }

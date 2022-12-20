@@ -3,6 +3,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework; //795
+using System.Diagnostics;
 using System.Xml;
 
 namespace Kursach
@@ -10,14 +11,13 @@ namespace Kursach
     internal class Game : GameWindow
     {
         int width, height, previouseScores, r, dr, textureId;
-        double fiX, fiY, ortoWidth,ortoHeight, lag = 0, TIME_PER_FRAME = 0.45;
+        double fiX, fiY, ortoWidth, ortoHeight, lag = 0, TIME_PER_FRAME = 0.45;
         bool pause=false;
         GameStatus gameState;
         Vector2 cursorPosition, centerPoint;
-        Button restart = new Button(1200, 800, 300, 200, Color4.Gray);
-        Button close = new Button(1200, 500, 300, 200, Color4.Gray);
-        List<Button> buttons = new List<Button>() { };
-        TextRenderer tr;
+        Button restart = new Button(1200, 800, 300, 200, Color4.Gray), close = new Button(1200, 500, 300, 200, Color4.Gray);
+        List<Button> buttons = new List<Button>() {};
+        TextRenderer tr1,tr2,tr3,tr4;
         private Vector3[] ColorMass = new Vector3[]
         {
             new Vector3(0,0,0), //black
@@ -51,17 +51,24 @@ namespace Kursach
             GL.MatrixMode(MatrixMode.Modelview);
             gameState = new GameStatus(height, width, centerPoint, r, dr);
             textureId = ContentPipe.LoadTexture(@"Content\Consolas_Alpha_W.png");
-            tr = new TextRenderer(16, 16, textureId, (float)ortoWidth, (float)ortoHeight);
+            tr1 = new TextRenderer(16, 16, textureId, (float)ortoWidth, (float)ortoHeight);
+            tr2 = new TextRenderer(16, 16, textureId, (float)ortoWidth, (float)ortoHeight);
+            tr3 = new TextRenderer(16, 16, textureId, (float)ortoWidth, (float)ortoHeight);
+            tr4 = new TextRenderer(16, 16, textureId, (float)ortoWidth, (float)ortoHeight);
             buttons.Add(restart);
             buttons.Add(close);
             close.OnMouseDown += CloseEvent;
             restart.OnMouseDown += Restart;
-            tr.TextRender(1280, 880, 20, "RESTART", 0.9f);
+            tr1.PrepareText(1280, 880, 20, "RESTART", 0.9f);
+            tr1.PrepareText(1280, 580, 25, "CLOSE", 0.9f);
+            tr4.PrepareText(100, 1100, 25, "SCORE:" + gameState.Scores.ToString(), 0.9f);
+            tr2.PrepareText(900, 950, 37, "paused", 3f);
+            tr3.PrepareText(640, 530, 25, "GAME OVER", 0.9f);
         }
         protected override void OnUnload()
         {
             gameState.CircleCell.Dispose();
-            tr.Dispose();
+            tr1.Dispose(); tr2.Dispose(); tr3.Dispose(); tr4.Dispose();
             base.OnUnload();
         }
         protected override void OnRenderFrame(FrameEventArgs args)
@@ -69,25 +76,8 @@ namespace Kursach
             base.OnRenderFrame(args);
             GL.ClearColor(Color4.Black);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-                GL.PointSize(5f);
-                GL.Color4(Color4.Red);
-                GL.Begin(PrimitiveType.Points);
-                GL.Vertex2(centerPoint);
-                GL.End();
             DrawAll(gameState);
-            foreach (Button butt in buttons)
-                butt.Draw();
-            GL.Color4(Color4.BlueViolet);
-            GL.PointSize(10f);
-            GL.Begin(PrimitiveType.Points);
-                GL.Vertex2(cursorPosition);
-            GL.End();
-            GL.Color4(Color4.White);
-            
-            tr.Render();
-            //tr.TextRender(1280, 580, 25, "CLOSE", 0.9f);
-            //tr.TextRender(100, 1100, 25, "SCORE:" + gameState.Scores.ToString(), 0.9f);
-            if(pause) { tr.TextRender(900, 950, 37, "pause", 3f); }
+            if (pause) { GL.Color4(Color4.White); tr2.RenderText(); }
             if(gameState.GameOver)
             {
                 GL.Color4(Color4.SlateGray);
@@ -97,8 +87,10 @@ namespace Kursach
                 GL.Vertex2(500 + 500, 300 + 500);
                 GL.Vertex2(500 + 500, 300);
                 GL.End();
-                tr.TextRender(640, 530, 25, "GAME OVER", 0.9f);
+                GL.Color4(Color4.White);
+                tr3.RenderText();
             }
+            
             SwapBuffers();
         }
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -108,18 +100,17 @@ namespace Kursach
                 if (!gameState.GameOver)
                 {
                     lag += args.Time;
+                    
                     if (lag > TIME_PER_FRAME)
                     {
                         while (lag > TIME_PER_FRAME)
                         {
+                            if (previouseScores < gameState.Scores && TIME_PER_FRAME - 0.03 > 0.03)
+                                    TIME_PER_FRAME -= 0.03;
                             previouseScores = gameState.Scores;
+                            lag -= TIME_PER_FRAME;
                             gameState.MoveBlockDown();
                             this.Title = "Tetris        Scores: " + gameState.Scores.ToString();
-                            lag -= TIME_PER_FRAME;
-                            if (previouseScores < gameState.Scores)
-                            {
-                                TIME_PER_FRAME -= 0.03;
-                            }
                         }
                     }
 
@@ -173,6 +164,13 @@ namespace Kursach
                 GL.Color3(ColorMass[gameState.CurrentBlock.Id]); // рисует всю сетку без текущего блока
                 gameState.CircleCell.Cells[p.Row][p.Column].Draw(); // рисует текущий блок
             }
+            foreach (Button butt in buttons)
+                butt.Draw();
+            GL.Color4(Color4.White);
+            tr1.RenderText();
+            tr4.RenderText();
+            if (previouseScores < gameState.Scores)
+                tr4.Update(100, 1100, 25, "SCORE:" + gameState.Scores.ToString(), 0.9f);
         }
         private void Restart(MouseButtonEventArgs e)
         {
