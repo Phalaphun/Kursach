@@ -21,6 +21,7 @@ namespace Kursach
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear); //Функция уменьшения текстуры при масштабировании
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear); //Функция увеличения текстуры при масштабировании. на основе 5 точек рядом с рассматрвиаемой точкой
+            GL.BindTexture(TextureTarget.Texture2D, 0);
             return id;
         }
 

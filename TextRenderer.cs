@@ -66,7 +66,7 @@ namespace Kursach
             GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.Blend);// Подключаем режим отображения текстур
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha); //описывает как складываются пиксели источника и того, кто уже в кадре. В моём случае для прозрачности нужно.
-            
+            GL.BindTexture(TextureTarget.Texture2D, textureId);
             for (int i = 0; i < vaoVboindex.Count; i += 3)
             {
                 GL.BindVertexArray(vaoVboindex[i]);
@@ -75,6 +75,7 @@ namespace Kursach
             }
             GL.Disable(EnableCap.Texture2D);
             GL.Disable(EnableCap.Blend);
+            GL.BindTexture(TextureTarget.Texture2D, 0);
         }
         public void Dispose(){
             GL.DeleteTexture(textureId);
